@@ -32,14 +32,27 @@ template <CandyType type, bool selected, bool matched>
 struct candy
 {
     using candy_type = std::integral_constant<CandyType, type>;
+
+    static void draw()
+    {
+        if (type == CandyType::RED) {
+            std::cout << "R  ";
+        } else if (type == CandyType::BLUE) {
+            std::cout << "B  ";
+        } else {
+            std::cout << "G  ";
+        }
+
+    }
 };
 
 template <class... Candies>
 struct row
 {
-    static void raw()
+    static void draw()
     {
-
+        (Candies::draw(), ...);
+        std::cout << "\n" << std::endl;
     }
 };
 
@@ -48,7 +61,7 @@ struct board
 {
     static void draw()
     {
-        Rows::draw();
+        (Rows::draw(), ...);
     }
 };
 

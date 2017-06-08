@@ -69,6 +69,8 @@ constexpr auto parse_board(BoardString&& board_string)
 
 int main()
 {
-    auto board = parse_board([]() constexpr { return constexpr_string("R  R  R  R  R  R  R  R "); });
+    auto board = parse_board([]() constexpr { return constexpr_string("R  B  G  R  R  R  R  R "); });
+    decltype(board)::draw();
+
     return 0;
 }
