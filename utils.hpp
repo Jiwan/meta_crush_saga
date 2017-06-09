@@ -28,4 +28,11 @@ constexpr auto mul(size_t_t<X>, size_t_t<Y>)
     return size_t_t<X * Y>{};
 };
 
+template<class T, class... Tail>
+constexpr auto make_array(T head, Tail... tail) -> std::array<T, 1 + sizeof...(Tail)>
+{
+    std::array<T, 1 + sizeof...(Tail)> array = { head, tail... };
+    return array;
+}
+
 #endif //TEMPLATE_CRUSH_SAGA_UTILS_HPP

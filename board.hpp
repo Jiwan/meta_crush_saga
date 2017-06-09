@@ -8,61 +8,69 @@
 #include <iostream>
 #include <utility>
 
-enum class CandyType
-{
-    RED = 0,
-    BLUE = 1,
-    GREEN = 2
+#include "utils.hpp"
+
+template <class T, char... values>
+struct convertor {
+    static constexpr char map [] = {values...};
+
+    constexpr static char encode(const T& t) {
+        return map[static_cast<int>(t)];
+    }
+
+    constexpr static T decode(char c) {
+        for (int i = 0; i < sizeof(map); ++i) {
+            if (map[i] == c) {
+                return static_cast<T>(i);
+            }
+        }
+    }
 };
 
-constexpr CandyType character_to_candytype(char c)
+enum class CandyType
 {
-    if (c == 'R') {
-        return CandyType::RED;
-    } else if (c == 'B') {
-        return CandyType::BLUE;
-    } else if (c == 'G') {
-        return CandyType::GREEN;
-    } else {
-        throw std::runtime_error("Invalid candytype");
+    None = 0,
+    Red,
+    Green,
+    Blue,
+};
+
+using candy_type_convertor = convertor<CandyType, ' ', 'R', 'G', 'B'>;
+
+enum class CandyState
+{
+    None = 0,
+    Pruned,
+    Falling,
+};
+
+using candy_state_convertor = convertor<CandyState, ' ', 'p', 'f'>;
+
+struct candy
+{
+    CandyType type;
+    CandyState state;
+};
+
+template <std::size_t RowCount, std::size_t ColumnCount>
+using board = std::array<std::array<candy, ColumnCount>, RowCount>;
+
+template <std::size_t RowCount, std::size_t ColumnCount>
+auto print(const board<RowCount, ColumnCount>& board) -> void {
+
+    for (std::size_t i = 0; i < RowCount; ++i) {
+        for (std::size_t j = 0; j < ColumnCount; ++j) {
+            std::cout << candy_type_convertor::encode(board[i][j].type) << "  ";
+        }
+
+        std::cout << std::endl;
     }
 }
 
-template <CandyType type, bool selected, bool matched>
-struct candy
+template <class... T>
+void print(T... objs)
 {
-    using candy_type = std::integral_constant<CandyType, type>;
-
-    static void draw()
-    {
-        if (type == CandyType::RED) {
-            std::cout << "R  ";
-        } else if (type == CandyType::BLUE) {
-            std::cout << "B  ";
-        } else {
-            std::cout << "G  ";
-        }
-
-    }
-};
-
-template <class... Candies>
-struct row
-{
-    static void draw()
-    {
-        (Candies::draw(), ...);
-        std::cout << "\n" << std::endl;
-    }
-};
-
-template <class... Rows>
-struct board
-{
-    static void draw()
-    {
-        (Rows::draw(), ...);
-    }
-};
+    (print(objs), ...);
+}
 
 #endif //TEMPLATE_CRUSH_SAGA_BOARD_HPP
