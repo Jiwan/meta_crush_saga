@@ -16,9 +16,9 @@ class game_logic
 private:
     enum class State
     {
+        Regenerating,
         Pruning,
         Falling,
-        Regenerating,
         PickingFirst,
         PickingSecond,
         Swapping
@@ -44,6 +44,5 @@ private:
     State state_;
     board<RowCount, ColumnCount> board_;
 };
-
 
 #endif //TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP

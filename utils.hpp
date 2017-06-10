@@ -7,6 +7,8 @@
 
 #include <utility>
 
+#define CONSTEXPR constexpr
+
 template <int i>
 constexpr std::integral_constant<int, i> int_c{};
 

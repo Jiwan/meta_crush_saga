@@ -3,5 +3,5 @@ project(template_crush_saga)
 
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z" )
 
-set(SOURCE_FILES main.cpp constexpr_string.hpp board.hpp utils.hpp)
+set(SOURCE_FILES main.cpp constexpr_string.hpp board.hpp utils.hpp game_logic.hpp parser.hpp)
 add_executable(template_crush_saga ${SOURCE_FILES})
