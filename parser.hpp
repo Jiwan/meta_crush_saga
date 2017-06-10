@@ -113,7 +113,9 @@ CONSTEXPR auto parse_candy(BoardString&& board_string,
 {
     constexpr auto s = board_string();
     std::size_t row_character_count = (column_count * candy_size) + 1;
-    std::size_t candy_position = (row_index * (row_character_count * candy_size)) + row_character_count + (column_index * candy_size);
+    std::size_t candy_position = (row_index * (row_character_count * candy_size)) + 
+                                 row_character_count + 
+                                 (column_index * candy_size);
 
     return candy {
         decode_candy_type(s[candy_position + candy_type_index]),
