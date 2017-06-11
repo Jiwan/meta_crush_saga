@@ -9,7 +9,7 @@
 #include "constexpr_string.hpp"
 #include "utils.hpp"
 
-constexpr char map_candy_type[] = {' ', 'R', 'G', 'B'};
+constexpr char map_candy_type[] = { ' ', 'R', 'G', 'B', 'Y' };
 
 constexpr char encode_candy_type(CandyType t)
 {
@@ -41,40 +41,48 @@ struct state_decoration
 
 constexpr state_decoration encode_candy_state(CandyState s)
 {
-    if (s.matched && s.hover) {
-        return { 'x', 'x', 'x', 'x' };
-    } else if (s.matched) {
-        return { '*', '*', '*', '*' };
-    } else if (s.selected) {
-        return { '[', ']', ' ', ' ' };
-    } else if (s.hover) {
-        return { '(', ')', ' ', ' ' };
-    } else {
-        return { ' ', ' ', ' ', ' ' };
+    state_decoration dec = { ' ', ' ', ' ', ' ' };
+
+    if (s.matched) {
+        dec = { '*', '*', '*', '*' };
     }
+
+    if (s.selected) {
+        dec.left = '[';
+        dec.right = ']';
+    } else if (s.hover) {
+        dec.left = '(';
+        dec.right = ')';
+    }
+
+    return dec;
 }
 
-CONSTEXPR CandyState decode_candy_state(char c)
+CONSTEXPR CandyState decode_candy_state(char left_char, char up_char)
 {
-    if (c == 'x') {
-        return { true, false, true };
-    } else if (c == '*') {
-        return { true, false, false };
-    } else if (c == '[') {
-        return { false, true, false };
-    } else if (c == '(') {
-        return { false, false, true };
-    } else if (c == ' ') {
-        return { false, false, false };
-    } else {
-        throw std::runtime_error("Invalid state!");
+    CandyState state = { false, false , false };
+
+    if (up_char == '*') {
+        state.matched = true;
+    } else if (up_char != ' ') {
+        throw std::runtime_error("Invalid matched state!");
     }
+
+    if (left_char == '[') {
+        state.selected = true;
+    } else if (left_char == '(') {
+        state.hover = true;
+    } else if (left_char != ' ' && left_char != '*') {
+        throw std::runtime_error("Invalid hover state!");
+    } 
+
+    return state;
 }
 
 constexpr int candy_size = 3;
 
-constexpr int candy_state_index = 0;
-constexpr int candy_type_index = 1;
+constexpr int candy_state_offset = 0;
+constexpr int candy_type_offset = 1;
 
 constexpr auto parse_board_column_count(const constexpr_string& str)
 {
@@ -112,14 +120,23 @@ CONSTEXPR auto parse_candy(BoardString&& board_string,
                            int column_count)
 {
     constexpr auto s = board_string();
-    int row_character_count = (column_count * candy_size) + 1;
-    int candy_position = (row_index * (row_character_count * candy_size)) + 
-                                 row_character_count + 
+
+    const int row_character_count = (column_count * candy_size) + 1;
+    
+    const int candy_area_index = (row_index * (row_character_count * candy_size)) +
                                  (column_index * candy_size);
 
+    const int candy_type_index = candy_area_index + 
+                                 (row_character_count * candy_type_offset) + 
+                                 candy_type_offset;
+    
+    const int candy_state_selected_or_hover = candy_type_index - candy_type_offset;
+
+    const int candy_matched = candy_area_index + candy_type_offset;
+
     return candy {
-        decode_candy_type(s[candy_position + candy_type_index]),
-        decode_candy_state(s[candy_position + candy_state_index])
+        decode_candy_type(s[candy_type_index]),
+        decode_candy_state(s[candy_state_selected_or_hover], s[candy_matched])
     };
 
 }

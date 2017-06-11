@@ -7,13 +7,16 @@
 
 #include "board.hpp"
 #include "inputs.hpp"
+#include "random.hpp"
 
 
 template <std::size_t RowCount, std::size_t ColumnCount>
 class game_logic
 {
 public:
-    CONSTEXPR game_logic(const board<RowCount, ColumnCount>& board) : board_(board)
+    CONSTEXPR game_logic(const board<RowCount, ColumnCount>& board, long long epoch_ms) : 
+        board_(board),
+        rg_(static_cast<std::uint16_t>(epoch_ms))
     {
     }
 
@@ -55,7 +58,7 @@ private:
                 if (!has_gap && board_[i][j].type == CandyType::None) {
                     has_gap = true;
                 } else if (has_gap) {
-                    board_[i + 1][j] = board_[i][j]; 
+                    board_[i + 1][j].type = board_[i][j].type; 
                 }
             }
 
@@ -75,7 +78,8 @@ private:
 
         for (auto& candy : board_[0]) {
             if (candy.type == CandyType::None) {
-                candy.type = CandyType::Blue;
+                CandyType type = static_cast<CandyType>((rg_.next() % candy_type_count) + 1);
+                candy.type = type;
                 any_generated = true;
             }
         }
@@ -217,13 +221,16 @@ private:
                     auto [selected_x, selected_y] = selected.value();
 
                     if (abs(selected_x - cursor_x) <=1 && abs(selected_y - cursor_y) <= 1) {
+                        board_[selected_x][selected_y].state.selected = false;
+                        board_[cursor_x][cursor_y].state.hover = false;
+                        
                         swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
 
                         if (!find_matches()) {
                             swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
-                            board_[selected_x][selected_y].state.selected = false;
                         }
 
+                        board_[cursor_x][cursor_y].state.hover = true;
                     }
 
                 } else {
@@ -260,6 +267,7 @@ private:
     }
 
 private:
+    random_generator rg_;
     board<RowCount, ColumnCount> board_;
 };
 

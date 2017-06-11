@@ -8,7 +8,9 @@ keypressed='None'
 
 while :
 do
-    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" &
+    epoch_ms=$(date +%s%3N)
+    
+    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms"  &
     wait
 
     if [ $? -ne 0 ]; then
@@ -26,13 +28,13 @@ do
     while :
     do 
         keypressed=''
-#        read -t1 -n1 key
-        read -n1 key
+        read -t1 -n1 key
+#        read -n1 key
 
-#        if [ $? -ne 0 ]; then
-#            keypressed='None'
-#            break
-#        fi
+         if [ $? -ne 0 ]; then
+             keypressed='None'
+             break
+         fi
 
 
 

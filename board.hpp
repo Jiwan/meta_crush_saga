@@ -16,7 +16,10 @@ enum class CandyType
     Red,
     Green,
     Blue,
+    Yellow
 };
+
+constexpr int candy_type_count = 4; // Excluding None.
 
 struct CandyState
 {

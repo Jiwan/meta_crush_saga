@@ -5,6 +5,7 @@
 #include "inputs.hpp"
 
 constexpr KeyboardInput keyboard_input = KeyboardInput::KEYBOARD_INPUT;
+constexpr long long epoch_ms = EPOCH_MS;
 
 constexpr auto board_string = []() constexpr
 {
