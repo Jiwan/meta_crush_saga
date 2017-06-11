@@ -1,15 +1,15 @@
 R"(
                         
- R  G       ( )         
+ R  G  B  B  G  B  G  B 
                         
                         
- B  B  G    ( )    G  B 
+ B  B  G  B  B  G  G  B 
                         
                         
- R  B  R  G ( )    R  R 
+ R  B  R  G  B  B  R  R 
                         
                         
- B  G  B  R ( ) G  G  B 
+ B  G  B (R) R  G  G  B 
                         
                         
  R  G  B  B  G  R  B  R 
