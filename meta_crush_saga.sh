@@ -28,7 +28,7 @@ do
     while :
     do 
         keypressed=''
-        read -t1 -n1 key
+        read -t0.1 -n1 key
 #        read -n1 key
 
          if [ $? -ne 0 ]; then
