@@ -1,6 +1,3 @@
-//
-// Created by jguegant on 2017-06-09.
-//
 #ifndef TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP
 #define TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP
 
@@ -8,6 +5,7 @@
 #include <variant>
 
 #include "board.hpp"
+#include "inputs.hpp"
 
 
 template <std::size_t RowCount, std::size_t ColumnCount>
@@ -18,7 +16,7 @@ public:
     {
     }
 
-    CONSTEXPR board<RowCount, ColumnCount> update()
+    CONSTEXPR board<RowCount, ColumnCount> update(KeyboardInput input)
     {
         bool board_updating = falldown() | generate();
 
@@ -32,12 +30,18 @@ public:
             return board_;
         }
 
-        // Take inputs in consideration!
+        board_updating = find_matches();
 
-        find_matches();
+        if (board_updating) {
+            return board_;
+        }
+
+        handle_input(input);
 
         return board_;
     }
+
+private:
 
     CONSTEXPR bool falldown()
     {
@@ -87,7 +91,6 @@ public:
                 if (candy.state.matched) {
                     candy.type = CandyType::None;
                     candy.state.matched = false;
-                    continue;
 
                     any_updated |= true;
                 }
@@ -97,13 +100,19 @@ public:
         return any_updated;
     }
 
-    CONSTEXPR void find_matches()
+    CONSTEXPR bool find_matches()
     {
-        auto mark_range_as_matched = [this](int x, int y, int index, bool horizontal) constexpr { 
+        bool any_match = false;
+
+        auto mark_range_as_matched = [this, &any_match](int x, int y, int index, bool horizontal) constexpr {
             for (int i = x; i < y; ++i) {
+                any_match |= true;
+
                 if (horizontal) {
+                    // std::cout << "Matched " << index << "," << i << std::endl; 
                     board_[index][i].state.matched = true; 
                 } else {
+                    // std::cout << "Matched " << i << "," << index << std::endl; 
                     board_[i][index].state.matched = true; 
                 }
             }
@@ -150,6 +159,8 @@ public:
                 if (candy.type == last_type) {
                     ++same_type_counter;
                 } else {
+                    // std::cout << "j: " << j << std::endl;
+                    // std::cout << "count: " << same_type_counter << std::endl;
                     if(same_type_counter >= 3) {
                         mark_range_as_matched(j - same_type_counter, j, i, false);
                     }
@@ -164,6 +175,13 @@ public:
                 mark_range_as_matched(RowCount - same_type_counter, RowCount, i, false);
             }
         }
+
+        return any_match;
+    }
+
+    CONSTEXPR void handle_input(KeyboardInput input)
+    {
+
     }
 
 private:

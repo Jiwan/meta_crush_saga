@@ -1,0 +1,20 @@
+R"(
+                        
+ B  B  B  B  B  B  B  B 
+                        
+                        
+ R  B  B  B  B  B  B  B 
+                        
+                        
+ R  B  B  B  B  B  B  B 
+                        
+                        
+ B  G  B  B  B  B  B  B 
+                        
+                        
+ R  G  B  B  G  B  B  B 
+                        
+                        
+ R  B  G     G          
+                        
+)"
