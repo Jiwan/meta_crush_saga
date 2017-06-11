@@ -1,20 +1,20 @@
 R"(
                         
- B  B  B  B  B  B  B  B 
+ R  G       ( )         
                         
                         
- R  B  B  B  B  B  B  B 
+ B  B  G    ( )    G  B 
                         
                         
- R  B  B  B  B  B  B  B 
+ R  B  R  G ( )    R  R 
                         
                         
- B  G  B  B  B  B  B  B 
+ B  G  B  R ( ) G  G  B 
                         
                         
- R  G  B  B  G  B  B  B 
+ R  G  B  B  G  R  B  R 
                         
                         
- R  B  G     G          
+ R  B  G  B  G  B  B  G 
                         
 )"

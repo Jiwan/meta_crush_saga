@@ -11,6 +11,10 @@ do
     g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" &
     wait
 
+    if [ $? -ne 0 ]; then
+        break
+    fi
+
     clear
     echo "            Meta Crush Saga"
     echo "------------------------------------------"

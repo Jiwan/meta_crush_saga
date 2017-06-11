@@ -31,7 +31,7 @@ struct candy
     CandyState state;
 };
 
-template <std::size_t RowCount, std::size_t ColumnCount>
+template <int RowCount, int ColumnCount>
 using board = std::array<std::array<candy, ColumnCount>, RowCount>;
 
 #endif //TEMPLATE_CRUSH_SAGA_BOARD_HPP

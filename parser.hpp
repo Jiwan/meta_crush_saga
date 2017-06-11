@@ -71,14 +71,14 @@ CONSTEXPR CandyState decode_candy_state(char c)
     }
 }
 
-constexpr std::size_t candy_size = 3;
+constexpr int candy_size = 3;
 
-constexpr std::size_t candy_state_index = 0;
-constexpr std::size_t candy_type_index = 1;
+constexpr int candy_state_index = 0;
+constexpr int candy_type_index = 1;
 
 constexpr auto parse_board_column_count(const constexpr_string& str)
 {
-    std::size_t i = 0;
+    int i = 0;
 
     for (; i < str.size(); ++i) {
         if (str[i] == '\n') {
@@ -93,7 +93,7 @@ constexpr auto parse_board_row_count(const constexpr_string& str)
 {
     int row_count = 1;
 
-    for (std::size_t i = 0; i < str.size(); ++i) {
+    for (int i = 0; i < str.size(); ++i) {
         if (str[i] == '\n') {
             ++row_count;
         }
@@ -107,13 +107,13 @@ constexpr auto parse_board_row_count(const constexpr_string& str)
 
 template <class BoardString>
 CONSTEXPR auto parse_candy(BoardString&& board_string,
-                           std::size_t row_index,
-                           std::size_t column_index,
-                           std::size_t column_count)
+                           int row_index,
+                           int column_index,
+                           int column_count)
 {
     constexpr auto s = board_string();
-    std::size_t row_character_count = (column_count * candy_size) + 1;
-    std::size_t candy_position = (row_index * (row_character_count * candy_size)) + 
+    int row_character_count = (column_count * candy_size) + 1;
+    int candy_position = (row_index * (row_character_count * candy_size)) + 
                                  row_character_count + 
                                  (column_index * candy_size);
 
@@ -127,13 +127,13 @@ CONSTEXPR auto parse_candy(BoardString&& board_string,
 template <class BoardString>
 CONSTEXPR auto parse_board(BoardString&& board_string)
 {
-    constexpr std::size_t column_count = parse_board_column_count(board_string());
-    constexpr std::size_t row_count = parse_board_row_count(board_string());
+    constexpr int column_count = parse_board_column_count(board_string());
+    constexpr int row_count = parse_board_row_count(board_string());
 
     std::array<std::array<candy, column_count>, row_count> board{};
 
-    for (std::size_t i = 0; i < row_count; ++i) {
-        for (std::size_t j = 0; j < column_count; ++j) {
+    for (int i = 0; i < row_count; ++i) {
+        for (int j = 0; j < column_count; ++j) {
             board[i][j] = parse_candy(board_string, i, j, column_count);
         }
     }

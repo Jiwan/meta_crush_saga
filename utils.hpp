@@ -7,34 +7,21 @@
 
 #include <utility>
 
-#define CONSTEXPR
+#define CONSTEXPR constexpr
 
-template <int i>
-constexpr std::integral_constant<int, i> int_c{};
-
-template <int i>
-using int_t = std::integral_constant<int, i>;
-
-template <std::size_t i>
-constexpr std::integral_constant<std::size_t, i> size_t_c{};
-
-template <std::size_t i>
-using size_t_t = std::integral_constant<std::size_t, i>;
-
-template <std::size_t N>
-constexpr std::make_index_sequence<N> make_index_sequence_v{};
-
-template <std::size_t X, std::size_t Y>
-constexpr auto mul(size_t_t<X>, size_t_t<Y>)
+constexpr int abs(int x)
 {
-    return size_t_t<X * Y>{};
-};
+    int const mask = x >> sizeof(int) * 8 - 1;
 
-template<class T, class... Tail>
-constexpr auto make_array(T head, Tail... tail) -> std::array<T, 1 + sizeof...(Tail)>
+    return (x + mask) ^ mask;
+}
+
+template <class T>
+constexpr void swap(T& t1, T& t2)
 {
-    std::array<T, 1 + sizeof...(Tail)> array = { head, tail... };
-    return array;
+    T tmp = t1;
+    t1 = t2;
+    t2 = tmp;
 }
 
 #endif //TEMPLATE_CRUSH_SAGA_UTILS_HPP

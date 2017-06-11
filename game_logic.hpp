@@ -2,6 +2,7 @@
 #define TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP
 
 #include <cstddef>
+#include <optional>
 #include <variant>
 
 #include "board.hpp"
@@ -118,7 +119,7 @@ private:
             }
         };
 
-        std::size_t same_type_counter = 1;
+        int same_type_counter = 1;
 
         // Horizontal scan.
 
@@ -181,7 +182,80 @@ private:
 
     CONSTEXPR void handle_input(KeyboardInput input)
     {
+        auto [cursor_x, cursor_y] = find_cursor();
 
+        auto move_cursor_relative = [=](int x, int y) constexpr {            
+            if (static_cast<int>(cursor_x) + x < 0 || static_cast<int>(cursor_x) + x >= RowCount) {
+                x = 0;
+            }
+            if (static_cast<int>(cursor_y) + y < 0 || static_cast<int>(cursor_y) + y >= ColumnCount) {
+                y = 0; 
+            }
+
+            board_[cursor_x][cursor_y].state.hover = false;
+            board_[cursor_x + x][cursor_y + y].state.hover = true;
+        };
+
+        switch (input)
+        {
+            case KeyboardInput::Left:
+                move_cursor_relative(0, -1);                
+                break;
+            case KeyboardInput::Right:
+                move_cursor_relative(0, 1);
+                break;
+            case KeyboardInput::Up:
+                move_cursor_relative(-1, 0);
+                break;
+            case KeyboardInput::Down:
+                move_cursor_relative(1, 0);
+                break;
+            case KeyboardInput::Space:
+                auto selected = find_if([](const candy& c){ return c.state.selected; });
+
+                if (selected) {
+                    auto [selected_x, selected_y] = selected.value();
+
+                    if (abs(selected_x - cursor_x) <=1 && abs(selected_y - cursor_y) <= 1) {
+                        swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+
+                        if (!find_matches()) {
+                            swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                        }
+
+                    }
+
+                } else {
+                    board_[cursor_x][cursor_y].state.selected = true;
+                }
+
+                break;
+        }
+    }
+
+    CONSTEXPR std::pair<int, int> find_cursor()
+    {
+        auto coord = find_if([](const candy& c){ return c.state.hover; });
+
+        if (coord) {
+            return coord.value();
+        }
+
+        return find_if([](const candy& c){ return c.state.selected; }).value();
+    }
+
+    template <class Predicate>
+    CONSTEXPR std::optional<std::pair<int, int>> find_if(Predicate&& p)
+    {
+        for (int i = 0; i < RowCount; ++i) {
+            for (int j = 0; j < ColumnCount; ++j) {
+                if (p(board_[i][j])) {
+                    return std::make_pair(i, j ); 
+                }
+            }
+        }
+
+        return std::nullopt;
     }
 
 private:
