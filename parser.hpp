@@ -2,10 +2,11 @@
 // Created by jguegant on 2017-06-10.
 //
 
-#ifndef TEMPLATE_CRUSH_SAGA_PARSER_HPP
-#define TEMPLATE_CRUSH_SAGA_PARSER_HPP
+#ifndef META_CRUSH_SAGA_PARSER_HPP
+#define META_CRUSH_SAGA_PARSER_HPP
 
 #include "board.hpp"
+#include "constexpr_string_view.hpp"
 #include "constexpr_string.hpp"
 #include "utils.hpp"
 
@@ -84,7 +85,7 @@ constexpr int candy_size = 3;
 constexpr int candy_state_offset = 0;
 constexpr int candy_type_offset = 1;
 
-constexpr auto parse_board_column_count(const constexpr_string& str)
+constexpr auto parse_board_column_count(const constexpr_string_view& str)
 {
     int i = 0;
 
@@ -97,7 +98,7 @@ constexpr auto parse_board_column_count(const constexpr_string& str)
     return i / candy_size;
 }
 
-constexpr auto parse_board_row_count(const constexpr_string& str)
+constexpr auto parse_board_row_count(const constexpr_string_view& str)
 {
     int row_count = 1;
 
@@ -146,6 +147,12 @@ CONSTEXPR auto parse_board(BoardString&& board_string)
 {
     constexpr int column_count = parse_board_column_count(board_string());
     constexpr int row_count = parse_board_row_count(board_string());
+
+    auto s = board_string();
+    
+    for (int i = 0; i < s.size(); ++i) {
+        std::cout << s[i];
+    }
 
     std::array<std::array<candy, column_count>, row_count> board{};
 

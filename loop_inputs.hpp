@@ -13,7 +13,11 @@ constexpr auto board_string = []() constexpr
 #include "board.txt"
     );
 
-    return board.startswith("\n") ? board.substr(1, board.size() -1) : board;
+    if (board.startswith("\n")) {
+        board.erase(board.begin());
+    }
+
+    return board;
 };
 
 #endif // META_CRUSH_SAGA_LOOP_INPUTS_HPP

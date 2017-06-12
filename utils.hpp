@@ -2,13 +2,13 @@
 // Created by jguegant on 2017-06-08.
 //
 
-#ifndef TEMPLATE_CRUSH_SAGA_UTILS_HPP
-#define TEMPLATE_CRUSH_SAGA_UTILS_HPP
+#ifndef META_CRUSH_SAGA_UTILS_HPP
+#define META_CRUSH_SAGA_UTILS_HPP
 
 #include <iterator>
 #include <utility>
 
-#define CONSTEXPR constexpr
+#define CONSTEXPR
 
 constexpr int abs(int x)
 {
@@ -37,6 +37,17 @@ count(InputIt first, InputIt last, const T& value)
     }
 
     return ret;
+}
+
+template<class InputIt, class UnaryPredicate>
+CONSTEXPR InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
+{
+    for (; first != last; ++first) {
+        if (p(*first)) {
+            return first;
+        }
+    }
+    return last;
 }
 
 #endif //TEMPLATE_CRUSH_SAGA_UTILS_HPP

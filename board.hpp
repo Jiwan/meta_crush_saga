@@ -2,8 +2,8 @@
 // Created by jguegant on 2017-06-08.
 //
 
-#ifndef TEMPLATE_CRUSH_SAGA_BOARD_HPP
-#define TEMPLATE_CRUSH_SAGA_BOARD_HPP
+#ifndef META_CRUSH_SAGA_BOARD_HPP
+#define META_CRUSH_SAGA_BOARD_HPP
 
 #include <iostream>
 #include <utility>
