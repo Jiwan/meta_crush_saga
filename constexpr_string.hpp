@@ -68,22 +68,22 @@ public:
         }
 
         const std::size_t new_size = (len == -1)?  (size_ - pos): std::min(len, (size_ - pos));
-        return constexpr_string<N>(data_ + pos, new_size);
+        return constexpr_string<N>(data_.data() + pos, new_size);
     }
 
     constexpr const char* data() const 
     {
-        return data_;
+        return data_.data();
     }
 
     constexpr iterator begin()
     {
-        return data_;
+        return data_.data();
     }
 
     constexpr iterator end()
     {
-        return data_ + size_ + 1;
+        return data_.data() + size_ + 1;
     }
 
     constexpr iterator erase(iterator pos)
@@ -101,18 +101,19 @@ public:
 
     constexpr iterator erase(iterator begin, iterator end)
     {
-        auto it = begin;
+        iterator it = begin;
 
-        for (; it < end; ++it) {
-            erase(begin);
+        size_ -= end - begin;
+
+        for (; end < this->end(); ++end, ++it) {
+            *it = *end;
         }
 
         return begin;
     }
 
 private:
-    char data_[N];
-    //std::array<char, N> data_;
+    std::array<char, N> data_;
     std::size_t size_;
 };
 
