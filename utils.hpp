@@ -8,7 +8,7 @@
 #include <iterator>
 #include <utility>
 
-#define CONSTEXPR
+#define CONSTEXPR constexpr
 
 constexpr int abs(int x)
 {
@@ -26,7 +26,7 @@ constexpr void swap(T& t1, T& t2)
 }
 
 template<class InputIt, class T>
-CONSTEXPR typename std::iterator_traits<InputIt>::difference_type
+constexpr typename std::iterator_traits<InputIt>::difference_type
 count(InputIt first, InputIt last, const T& value)
 {
     typename std::iterator_traits<InputIt>::difference_type ret = 0;
@@ -40,10 +40,21 @@ count(InputIt first, InputIt last, const T& value)
 }
 
 template<class InputIt, class UnaryPredicate>
-CONSTEXPR InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
+constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
 {
     for (; first != last; ++first) {
         if (p(*first)) {
+            return first;
+        }
+    }
+    return last;
+}
+
+template<class InputIt, class T>
+constexpr InputIt find(InputIt first, InputIt last, const T& value)
+{
+    for (; first != last; ++first) {
+        if (*first == value) {
             return first;
         }
     }

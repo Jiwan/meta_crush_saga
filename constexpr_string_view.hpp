@@ -4,6 +4,9 @@
 class constexpr_string_view
 {
 public:
+    using const_iterator = const char*;
+
+public:
     template<std::size_t N>
     constexpr constexpr_string_view(const char(&a)[N]): ptr_(a), size_(N - 1)
     {
@@ -51,6 +54,16 @@ public:
 
         const std::size_t new_size = (len == -1)?  (size_ - pos): std::min(len, (size_ - pos));
         return constexpr_string_view(ptr_ + pos,  new_size);
+    }
+
+    constexpr const_iterator cbegin() const
+    {
+        return ptr_;
+    }
+
+    constexpr const_iterator cend() const
+    {
+        return ptr_ + size_ + 1;
     }
 
 private:

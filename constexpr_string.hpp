@@ -15,6 +15,7 @@ class constexpr_string
 public:
     using iterator = char*;
 
+public:
     constexpr constexpr_string(const char(&a)[N]): data_{}, size_(N - 1)
     {
         for (std::size_t i = 0; i < N; ++i) {
@@ -67,44 +68,51 @@ public:
         }
 
         const std::size_t new_size = (len == -1)?  (size_ - pos): std::min(len, (size_ - pos));
-        return constexpr_string<N>(data_.data() + pos, new_size);
+        return constexpr_string<N>(data_ + pos, new_size);
     }
 
     constexpr const char* data() const 
     {
-        return data_.data();
+        return data_;
     }
 
     constexpr iterator begin()
     {
-        return data_.data();
+        return data_;
     }
 
     constexpr iterator end()
     {
-        return data_.data() + size_ + 1;
+        return data_ + size_ + 1;
     }
 
-    constexpr void erase(iterator pos)
-    {   
-        for (; pos < end() - 1; ++pos) {
-            swap(*pos, *(pos + 1));
+    constexpr iterator erase(iterator pos)
+    {  
+        iterator it = pos;
+
+        for (; it < end() - 1; ++it) {
+            *it = *(it + 1);
         }
 
         --size_;
+
+        return pos;
     }
 
-    constexpr void erase(iterator begin, iterator end)
+    constexpr iterator erase(iterator begin, iterator end)
     {
         auto it = begin;
 
         for (; it < end; ++it) {
             erase(begin);
         }
+
+        return begin;
     }
 
 private:
-    std::array<char, N> data_;
+    char data_[N];
+    //std::array<char, N> data_;
     std::size_t size_;
 };
 

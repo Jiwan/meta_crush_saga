@@ -99,29 +99,20 @@ constexpr auto parse_board_column_count(const constexpr_string_view& str)
 }
 
 constexpr auto parse_board_row_count(const constexpr_string_view& str)
-{
-    int row_count = 1;
-
-    for (int i = 0; i < str.size(); ++i) {
-        if (str[i] == '\n') {
-            ++row_count;
-        }
-    }
+{   
+    int row_count = count(str.cbegin(), str.cend(), '\n');
     
-    if (str[str.size() - 1] == '\n')
-        --row_count;
+    if (str[str.size() - 1] != '\n')
+        ++row_count;
 
     return row_count / candy_size;
 }
 
-template <class BoardString>
-CONSTEXPR auto parse_candy(BoardString&& board_string,
+CONSTEXPR auto parse_candy(const constexpr_string_view& str,
                            int row_index,
                            int column_index,
                            int column_count)
 {
-    constexpr auto s = board_string();
-
     const int row_character_count = (column_count * candy_size) + 1;
     
     const int candy_area_index = (row_index * (row_character_count * candy_size)) +
@@ -136,23 +127,48 @@ CONSTEXPR auto parse_candy(BoardString&& board_string,
     const int candy_matched = candy_area_index + candy_type_offset;
 
     return candy {
-        decode_candy_type(s[candy_type_index]),
-        decode_candy_state(s[candy_state_selected_or_hover], s[candy_matched])
+        decode_candy_type(str[candy_type_index]),
+        decode_candy_state(str[candy_state_selected_or_hover], str[candy_matched])
     };
 
 }
 
-template <class BoardString>
-CONSTEXPR auto parse_board(BoardString&& board_string)
+constexpr auto isolate_board_game(auto str)
 {
-    constexpr int column_count = parse_board_column_count(board_string());
-    constexpr int row_count = parse_board_row_count(board_string());
+    str.erase(str.begin(), find(str.begin(), str.end(), '-'));
+    str.erase(str.begin(), find(str.begin(), str.end(), '\n') + 1);
 
-    auto s = board_string();
-    
-    for (int i = 0; i < s.size(); ++i) {
-        std::cout << s[i];
+    typename decltype(str)::iterator it = str.begin();
+
+    while (true)
+    {
+        auto board_left = find(it, str.end(), '|');
+        
+        if (board_left == str.end())
+            break;
+
+        it = str.erase(it, board_left + 1);
+
+        auto board_right = find(it, str.end(), '|');
+        auto endline = find(it, str.end(), '\n');
+        
+        it = str.erase(board_right, endline);
+        
+        ++it;
     }
+
+    str.erase(it, str.end());
+    
+    return str;
+}
+
+template <class GameString>
+CONSTEXPR auto parse_board(GameString&& game_string)
+{
+    constexpr auto board_string = isolate_board_game(game_string()); 
+
+    constexpr int column_count = parse_board_column_count(board_string);
+    constexpr int row_count = parse_board_row_count(board_string);
 
     std::array<std::array<candy, column_count>, row_count> board{};
 
@@ -164,6 +180,13 @@ CONSTEXPR auto parse_board(BoardString&& board_string)
 
     return board;
 }
+
+template <class GameString>
+CONSTEXPR auto parse_game(GameString&& game_string)
+{
+    return parse_board(game_string);
+}
+
 
 template <std::size_t RowCount, std::size_t ColumnCount>
 constexpr void print_board(const board<RowCount, ColumnCount>& board) {

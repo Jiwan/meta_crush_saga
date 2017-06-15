@@ -1,20 +1,27 @@
 R"(
-                        
- Y  R  R  G  R  R  B  R 
-                        
-                        
- R  Y (G) B  R  B  G  G 
-                        
-                        
- R  B  B  G  B  R  G  Y 
-                        
-                        
- B  G  Y  Y  G  Y  B  R 
-                        
-                        
- R  R  B  G  Y  B  G  B 
-                        
-                        
- R  Y  G  B  R  R  B  G 
-                        
+      Meta crush saga     
+
+  ------------------------
+ |                        |
+ | Y  R  R  G  R  R  B  R |
+ |                        |
+ |                        |
+ | R  Y (G) B  R  B  G  G |
+ |                        |
+ |                        |
+ | R  B  B  G  B  R  G  Y |
+ |                        |
+ |                        |
+ | B  G  Y  Y  G  Y  B  R |
+ |                        |
+ |                        |
+ | R  R  B  G  Y  B  G  B |
+ |                        |
+ |                        |
+ | R  Y  G  B  R  R  B  G |
+ |                        |
+  ------------------------
+ > Moves: 42              <
+ > Score: 8900            <
+
 )"
