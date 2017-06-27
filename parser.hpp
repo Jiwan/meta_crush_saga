@@ -81,21 +81,12 @@ CONSTEXPR CandyState decode_candy_state(char left_char, char up_char)
 }
 
 constexpr int candy_size = 3;
-
-constexpr int candy_state_offset = 0;
 constexpr int candy_type_offset = 1;
 
 constexpr auto parse_board_column_count(const constexpr_string_view& str)
 {
-    int i = 0;
-
-    for (; i < str.size(); ++i) {
-        if (str[i] == '\n') {
-            break;
-        }
-    }
-
-    return i / candy_size;
+    const auto endline = find(str.cbegin(), str.cend(), '\n');
+    return (endline - str.cbegin()) / candy_size;
 }
 
 constexpr auto parse_board_row_count(const constexpr_string_view& str)
@@ -138,7 +129,7 @@ constexpr auto isolate_board_game(auto str)
     str.erase(str.begin(), find(str.begin(), str.end(), '-'));
     str.erase(str.begin(), find(str.begin(), str.end(), '\n') + 1);
 
-    typename decltype(str)::iterator it = str.begin();
+    auto it = str.begin();
 
     while (true)
     {
@@ -187,6 +178,49 @@ CONSTEXPR auto parse_game(GameString&& game_string)
     return parse_board(game_string);
 }
 
+template <std::size_t RowCount, std::size_t ColumnCount>
+CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
+    constexpr int row_padding = 5;
+
+    constexpr auto e = [](CandyState s) constexpr { return encode_candy_state(s); };
+
+    constexpr int board_size_in_char = ((ColumnCount * candy_size) + row_padding) * (RowCount * candy_size);
+    constexpr_string<board_size_in_char> result;
+
+    int cursor = 0;
+    
+#define W(C) result[cursor++] = C
+#define NEWLINE() W(' '); W('|')
+#define ENDLINE() W('|'); W(' '); W('\n')
+
+    for (const auto& row : board) {
+        NEWLINE();
+
+        for (const auto& column : row) {
+            W(' '); W(e(column.state).top); W(' ');
+        }
+
+        ENDLINE();
+        NEWLINE();
+
+        for (const auto& column : row) {
+            W(e(column.state).left);
+            W(encode_candy_type(column.type));
+            W(e(column.state).right);
+        }
+
+        ENDLINE();
+        NEWLINE();
+
+        for (const auto& column : row) {
+            W(' '); W(e(column.state).bottom); W(' ');  
+        }
+
+        ENDLINE();
+    }
+
+    return result;
+}
 
 template <std::size_t RowCount, std::size_t ColumnCount>
 constexpr void print_board(const board<RowCount, ColumnCount>& board) {

@@ -14,7 +14,7 @@ int main()
     CONSTEXPR auto board = parse_game(board_string);
     CONSTEXPR auto new_board = game_logic(board, epoch_ms).update(keyboard_input);
 
-    print_board(new_board);   
+    print_board_to_array(new_board);   
 
     return 0;
 }

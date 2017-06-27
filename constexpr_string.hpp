@@ -16,6 +16,11 @@ public:
     using iterator = char*;
 
 public:
+    constexpr constexpr_string(): data_{}, size_{N}
+    {
+        
+    }
+
     constexpr constexpr_string(const char(&a)[N]): data_{}, size_(N - 1)
     {
         for (std::size_t i = 0; i < N; ++i) {
@@ -30,9 +35,22 @@ public:
         }
     }
 
-    constexpr char operator[](std::size_t n) const
+    constexpr const char& operator[](std::size_t n) const
     {
-        return n < size_? data_[n] : throw std::out_of_range("");
+        if (n < size_) {
+            return data_[n];
+        } else {
+            throw std::out_of_range("");
+        }
+    }
+
+    constexpr char& operator[](std::size_t n)
+    {
+        if (n < size_) {
+            return data_[n];
+        } else {
+            throw std::out_of_range("");
+        }
     }
 
     constexpr std::size_t size() const
@@ -71,19 +89,30 @@ public:
         return constexpr_string<N>(data_.data() + pos, new_size);
     }
 
+    template <std::size_t M>
+    constexpr auto append(const constexpr_string<M>& other) {
+        constexpr_string<N + M> output(*this);
+
+        for (std::size_t i = 0; i < other.size(); ++i, ++output.size) {
+            output.data_[size() + i] = other[i];
+        }
+
+        return output; 
+    }
+
     constexpr const char* data() const 
     {
-        return data_.data();
+        return data_;
     }
 
     constexpr iterator begin()
     {
-        return data_.data();
+        return data_;
     }
 
     constexpr iterator end()
     {
-        return data_.data() + size_ + 1;
+        return data_ + size_ + 1;
     }
 
     constexpr iterator erase(iterator pos)
@@ -113,7 +142,8 @@ public:
     }
 
 private:
-    std::array<char, N> data_;
+    //std::array<char, N> data_;
+    char data_[N];
     std::size_t size_;
 };
 

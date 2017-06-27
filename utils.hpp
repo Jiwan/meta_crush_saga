@@ -8,7 +8,7 @@
 #include <iterator>
 #include <utility>
 
-#define CONSTEXPR constexpr
+#define CONSTEXPR 
 
 constexpr int abs(int x)
 {
@@ -47,6 +47,7 @@ constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
             return first;
         }
     }
+    
     return last;
 }
 
@@ -58,6 +59,7 @@ constexpr InputIt find(InputIt first, InputIt last, const T& value)
             return first;
         }
     }
+
     return last;
 }
 
