@@ -7,17 +7,13 @@
 constexpr KeyboardInput keyboard_input = KeyboardInput::KEYBOARD_INPUT;
 constexpr long long epoch_ms = EPOCH_MS;
 
-constexpr auto board_string = []() constexpr
+constexpr auto game_string = []() constexpr
 {
-    auto board = constexpr_string(
-#include "board.txt"
+    auto game = constexpr_string(
+#include "game.txt"
     );
 
-    if (board.startswith("\n")) {
-        board.erase(board.begin());
-    }
-
-    return board;
+    return game;
 };
 
 #endif // META_CRUSH_SAGA_LOOP_INPUTS_HPP

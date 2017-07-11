@@ -56,6 +56,16 @@ public:
         return constexpr_string_view(ptr_ + pos,  new_size);
     }
 
+    constexpr const_iterator begin() const
+    {
+        return ptr_;
+    }
+
+    constexpr const_iterator end() const
+    {
+        return ptr_ + size_ + 1;
+    }
+
     constexpr const_iterator cbegin() const
     {
         return ptr_;

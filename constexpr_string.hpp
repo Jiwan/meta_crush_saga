@@ -14,6 +14,7 @@ class constexpr_string
 {
 public:
     using iterator = char*;
+    using const_iterator = const char*;
 
 public:
     constexpr constexpr_string(): data_{}, size_{N}
@@ -111,6 +112,26 @@ public:
     }
 
     constexpr iterator end()
+    {
+        return data_ + size_ + 1;
+    }
+
+    constexpr const_iterator cbegin() const
+    {
+        return data_;
+    }
+
+    constexpr const_iterator cend() const
+    {
+        return data_ + size_ + 1;
+    }
+
+    constexpr const_iterator begin() const
+    {
+        return data_;
+    }
+
+    constexpr const_iterator end() const
     {
         return data_ + size_ + 1;
     }

@@ -5,10 +5,24 @@
 #ifndef META_CRUSH_SAGA_PARSER_HPP
 #define META_CRUSH_SAGA_PARSER_HPP
 
+#include <tuple>
+
 #include "board.hpp"
+#include "game_engine.hpp"
 #include "constexpr_string_view.hpp"
 #include "constexpr_string.hpp"
 #include "utils.hpp"
+
+CONSTEXPR int stoi(const constexpr_string_view& s)
+{
+    int result = 0;
+
+    for (const char c : s) {
+        result = result * 10 + (c - '0');
+    } 
+    
+    return result;
+}
 
 constexpr char map_candy_type[] = { ' ', 'R', 'G', 'B', 'Y' };
 
@@ -173,18 +187,45 @@ CONSTEXPR auto parse_board(GameString&& game_string)
 }
 
 template <class GameString>
+CONSTEXPR auto parse_score(GameString&& game_string)
+{
+    constexpr auto str = game_string();
+
+    auto score_begin = find(str.cbegin(), str.cend(), ':') + 2;
+    auto score_end = find(score_begin, str.cend(), ' ');
+
+    return stoi({score_begin, score_end - score_begin});
+}
+
+template <class GameString>
+CONSTEXPR auto parse_moves(GameString&& game_string)
+{
+    constexpr auto str = game_string();
+
+    auto moves_begin = find(str.cbegin(), str.cend(), ':') + 2;
+    auto moves_end = find(moves_begin, str.cend(), ' ');
+
+    return stoi({moves_begin, moves_end - moves_begin});
+}
+
+template <class GameString>
 CONSTEXPR auto parse_game(GameString&& game_string)
 {
-    return parse_board(game_string);
+    CONSTEXPR auto board = parse_board(game_string);
+    CONSTEXPR auto score = parse_score(game_string);
+    CONSTEXPR auto moves = parse_moves(game_string);
+
+    return std::make_tuple(board, score, moves);
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>
 CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
-    constexpr int row_padding = 5;
+    constexpr int row_padding = 5; // space begin + | + | + space end + \n
+    constexpr int width = ((ColumnCount * candy_size) + row_padding);
 
     constexpr auto e = [](CandyState s) constexpr { return encode_candy_state(s); };
 
-    constexpr int board_size_in_char = ((ColumnCount * candy_size) + row_padding) * (RowCount * candy_size);
+    constexpr int board_size_in_char = width * ((RowCount * candy_size) + 2);
     constexpr_string<board_size_in_char> result;
 
     int cursor = 0;
@@ -192,6 +233,15 @@ CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
 #define W(C) result[cursor++] = C
 #define NEWLINE() W(' '); W('|')
 #define ENDLINE() W('|'); W(' '); W('\n')
+
+#define EPILOG() \
+    W(' ');W(' '); \
+    for (int r = 0; r < width - row_padding; ++r) { \
+        W('-'); \
+    } \
+    W(' ');W(' ');W('\n')
+
+    EPILOG();
 
     for (const auto& row : board) {
         NEWLINE();
@@ -219,7 +269,18 @@ CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
         ENDLINE();
     }
 
+    EPILOG();
+
     return result;
+}
+
+template <std::size_t RowCount, std::size_t ColumnCount>
+CONSTEXPR auto print_game(const game_engine<RowCount, ColumnCount>& engine)
+{
+    auto header = constexpr_string("      Meta crush saga      \n");
+    auto board = print_board_to_array(engine.get_board());
+
+    return header.append(board);
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>

@@ -11,38 +11,59 @@
 
 
 template <std::size_t RowCount, std::size_t ColumnCount>
-class game_logic
+class game_engine
 {
 public:
-    CONSTEXPR game_logic(const board<RowCount, ColumnCount>& board, long long epoch_ms) : 
+    CONSTEXPR game_engine(const board<RowCount, ColumnCount>& board, int score, int moves, long long epoch_ms) : 
         board_(board),
+        score_(score),
+        moves_(moves),
         rg_(static_cast<std::uint16_t>(epoch_ms))
     {
     }
 
-    CONSTEXPR board<RowCount, ColumnCount> update(KeyboardInput input)
+    CONSTEXPR game_engine& update(KeyboardInput input)
     {
+        if (moves_ <= 0) {
+            return *this;
+        }
+
         bool board_updating = falldown() | generate();
 
         if (board_updating) {
-            return board_;
+            return *this;
         }
 
         board_updating = animate_matches();
 
         if (board_updating) {
-            return board_;
+            return *this;
         }
 
         board_updating = find_matches();
 
         if (board_updating) {
-            return board_;
+            return *this;
         }
 
         handle_input(input);
 
+        return *this;
+    }
+
+    CONSTEXPR auto get_board() const
+    {
         return board_;
+    }
+
+    CONSTEXPR int get_score() const
+    {
+        return score_;
+    }
+
+    CONSTEXPR int get_moves() const
+    {
+        return moves_;
     }
 
 private:
@@ -269,6 +290,8 @@ private:
 private:
     random_generator rg_;
     board<RowCount, ColumnCount> board_;
+    int score_;
+    int moves_;
 };
 
 #endif //TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP

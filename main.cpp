@@ -4,17 +4,27 @@
 #include <variant>
 
 #include "loop_inputs.hpp"
-#include "game_logic.hpp"
+#include "game_engine.hpp"
 #include "parser.hpp"
 
 int main()
 {
     // parse_game(board_string);
 
-    CONSTEXPR auto board = parse_game(board_string);
-    CONSTEXPR auto new_board = game_logic(board, epoch_ms).update(keyboard_input);
+    CONSTEXPR auto game = parse_game(game_string);
+    CONSTEXPR auto engine = game_engine(std::get<0>(game), std::get<1>(game), std::get<2>(game), epoch_ms)
+                                   .update(keyboard_input);
 
-    print_board_to_array(new_board);   
+
+    CONSTEXPR auto array = print_game(engine);
+
+    for (const char& c : array) {
+        std::cout << c;
+    }
+
+    std::cout << std::endl;
+    std::cout << "score: " << std::get<1>(game);
+
 
     return 0;
 }
