@@ -19,9 +19,23 @@ CONSTEXPR int stoi(const constexpr_string_view& s)
 
     for (const char c : s) {
         result = result * 10 + (c - '0');
-    } 
+    }
     
     return result;
+}
+
+CONSTEXPR auto itos(int x)
+{
+    int digits = digits_amount(x);
+
+    constexpr_string<10> result;
+
+    for (int i = 0; i < digits; ++i) {
+        result[digits - 1 - i] = (x % 10) + '0';
+        x = x / 10;
+    }
+
+    return result.substr(0, digits);
 }
 
 constexpr char map_candy_type[] = { ' ', 'R', 'G', 'B', 'Y' };
@@ -138,7 +152,7 @@ CONSTEXPR auto parse_candy(const constexpr_string_view& str,
 
 }
 
-constexpr auto isolate_board_game(auto str)
+constexpr auto isolate_board_game(auto&& str)
 {
     str.erase(str.begin(), find(str.begin(), str.end(), '-'));
     str.erase(str.begin(), find(str.begin(), str.end(), '\n') + 1);
@@ -192,7 +206,7 @@ CONSTEXPR auto parse_score(GameString&& game_string)
     constexpr auto str = game_string();
 
     auto score_begin = find(str.cbegin(), str.cend(), ':') + 2;
-    auto score_end = find(score_begin, str.cend(), ' ');
+    auto score_end = find(score_begin, str.cend(), '\n');
 
     return stoi({score_begin, score_end - score_begin});
 }
@@ -202,8 +216,9 @@ CONSTEXPR auto parse_moves(GameString&& game_string)
 {
     constexpr auto str = game_string();
 
-    auto moves_begin = find(str.cbegin(), str.cend(), ':') + 2;
-    auto moves_end = find(moves_begin, str.cend(), ' ');
+    auto score_begin = find(str.cbegin(), str.cend(), ':') + 1;
+    auto moves_begin = find(score_begin, str.cend(), ':') + 2;
+    auto moves_end = find(moves_begin, str.cend(), '\n');
 
     return stoi({moves_begin, moves_end - moves_begin});
 }
@@ -219,7 +234,8 @@ CONSTEXPR auto parse_game(GameString&& game_string)
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>
-CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
+CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board)
+{
     constexpr int row_padding = 5; // space begin + | + | + space end + \n
     constexpr int width = ((ColumnCount * candy_size) + row_padding);
 
@@ -274,13 +290,24 @@ CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board) {
     return result;
 }
 
-template <std::size_t RowCount, std::size_t ColumnCount>
-CONSTEXPR auto print_game(const game_engine<RowCount, ColumnCount>& engine)
+CONSTEXPR auto print_score(auto& engine)
 {
-    auto header = constexpr_string("      Meta crush saga      \n");
-    auto board = print_board_to_array(engine.get_board());
+    return constexpr_string("> score: ").append(itos(engine.get_score())).append(constexpr_string("\n"));
+}
 
-    return header.append(board);
+CONSTEXPR auto print_moves(auto& engine)
+{
+    return constexpr_string("> moves: ").append(itos(engine.get_moves())).append(constexpr_string("\n"));
+}
+
+CONSTEXPR auto print_game(auto& engine)
+{
+    auto result = constexpr_string("      Meta crush saga      \n");
+    auto board = print_board_to_array(engine.get_board());
+    auto score = print_score(engine);
+    auto moves = print_moves(engine);
+
+    return result.append(board).append(score).append(moves);
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>

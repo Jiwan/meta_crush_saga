@@ -63,7 +63,7 @@ public:
 
     constexpr const_iterator end() const
     {
-        return ptr_ + size_ + 1;
+        return ptr_ + size_;
     }
 
     constexpr const_iterator cbegin() const
@@ -73,7 +73,7 @@ public:
 
     constexpr const_iterator cend() const
     {
-        return ptr_ + size_ + 1;
+        return ptr_ + size_;
     }
 
 private:

@@ -8,7 +8,7 @@
 #include <iterator>
 #include <utility>
 
-#define CONSTEXPR constexpr
+#define CONSTEXPR
 
 constexpr int abs(int x)
 {
@@ -30,7 +30,7 @@ constexpr typename std::iterator_traits<InputIt>::difference_type
 count(InputIt first, InputIt last, const T& value)
 {
     typename std::iterator_traits<InputIt>::difference_type ret = 0;
-    for (; first != last; ++first) {
+    for (; first < last; ++first) {
         if (*first == value) {
             ret++;
         }
@@ -42,7 +42,7 @@ count(InputIt first, InputIt last, const T& value)
 template<class InputIt, class UnaryPredicate>
 constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
 {
-    for (; first != last; ++first) {
+    for (; first < last; ++first) {
         if (p(*first)) {
             return first;
         }
@@ -54,13 +54,29 @@ constexpr InputIt find_if(InputIt first, InputIt last, UnaryPredicate p)
 template<class InputIt, class T>
 constexpr InputIt find(InputIt first, InputIt last, const T& value)
 {
-    for (; first != last; ++first) {
+    for (; first < last; ++first) {
         if (*first == value) {
             return first;
         }
     }
 
     return last;
+}
+
+constexpr auto digits_amount(int x)
+{
+    x = abs(x);
+
+    return (x < 10 ? 1 :   
+        (x < 100 ? 2 :   
+        (x < 1000 ? 3 :   
+        (x < 10000 ? 4 :   
+        (x < 100000 ? 5 :   
+        (x < 1000000 ? 6 :   
+        (x < 10000000 ? 7 :  
+        (x < 100000000 ? 8 :  
+        (x < 1000000000 ? 9 :  
+        10)))))))));  
 }
 
 #endif //TEMPLATE_CRUSH_SAGA_UTILS_HPP

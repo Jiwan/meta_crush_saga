@@ -36,6 +36,14 @@ public:
         }
     }
 
+    template <std::size_t M>
+    constexpr constexpr_string(const constexpr_string<M>& other) : data_{}, size_{N}
+    {
+        for (std::size_t i = 0; i < other.size(); ++i) {
+            data_[i] = other[i];
+        }
+    }
+
     constexpr const char& operator[](std::size_t n) const
     {
         if (n < size_) {
@@ -87,15 +95,16 @@ public:
         }
 
         const std::size_t new_size = (len == -1)?  (size_ - pos): std::min(len, (size_ - pos));
-        return constexpr_string<N>(data_.data() + pos, new_size);
+        return constexpr_string<N>(data_+ pos, new_size);
     }
 
     template <std::size_t M>
-    constexpr auto append(const constexpr_string<M>& other) {
+    constexpr auto append(const constexpr_string<M>& other)
+    {
         constexpr_string<N + M> output(*this);
 
-        for (std::size_t i = 0; i < other.size(); ++i, ++output.size) {
-            output.data_[size() + i] = other[i];
+        for (std::size_t i = 0; i < other.size(); ++i) {
+            output[size() + i] = other[i];
         }
 
         return output; 
@@ -113,7 +122,7 @@ public:
 
     constexpr iterator end()
     {
-        return data_ + size_ + 1;
+        return data_ + size_;
     }
 
     constexpr const_iterator cbegin() const
@@ -123,7 +132,7 @@ public:
 
     constexpr const_iterator cend() const
     {
-        return data_ + size_ + 1;
+        return data_ + size_;
     }
 
     constexpr const_iterator begin() const
@@ -133,7 +142,7 @@ public:
 
     constexpr const_iterator end() const
     {
-        return data_ + size_ + 1;
+        return data_ + size_;
     }
 
     constexpr iterator erase(iterator pos)
