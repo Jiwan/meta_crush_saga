@@ -29,7 +29,7 @@ public:
         }
     }
 
-    constexpr constexpr_string(const char* a, int size): data_{}, size_(size)
+    constexpr constexpr_string(const char* a, std::size_t size): data_{}, size_{size}
     {
         for (std::size_t i = 0; i < N && i < size; ++i) {
             data_[i] = a[i];
@@ -38,6 +38,14 @@ public:
 
     template <std::size_t M>
     constexpr constexpr_string(const constexpr_string<M>& other) : data_{}, size_{N}
+    {
+        for (std::size_t i = 0; i < other.size(); ++i) {
+            data_[i] = other[i];
+        }
+    }
+
+    template <std::size_t M>
+    constexpr constexpr_string(const constexpr_string<M>& other, std::size_t size) : data_{}, size_{size}
     {
         for (std::size_t i = 0; i < other.size(); ++i) {
             data_[i] = other[i];
@@ -101,7 +109,7 @@ public:
     template <std::size_t M>
     constexpr auto append(const constexpr_string<M>& other)
     {
-        constexpr_string<N + M> output(*this);
+        constexpr_string<N + M> output(*this, size() + other.size());
 
         for (std::size_t i = 0; i < other.size(); ++i) {
             output[size() + i] = other[i];

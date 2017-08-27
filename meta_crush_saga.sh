@@ -18,10 +18,7 @@ do
     fi
 
     clear
-    echo "            Meta Crush Saga"
-    echo "------------------------------------------"
-    echo
-
+    
     board_output=$(./a.out)
     echo $board_output
 
@@ -29,14 +26,11 @@ do
     do 
         keypressed=''
         read -t0.1 -n1 key
-#        read -n1 key
 
-         if [ $? -ne 0 ]; then
-             keypressed='None'
-             break
-         fi
-
-
+        if [ $? -ne 0 ]; then
+            keypressed='None'
+            break
+        fi
 
         if [ "$key" == ' ' ]
         then
@@ -71,8 +65,7 @@ do
         fi  
     done
 
-    echo $keypressed
-    echo "R\"(" > board.txt
-    echo $board_output >> board.txt
-    echo ")\"" >> board.txt
+    echo "R\"(" > game.txt
+    echo $board_output >> game.txt
+    echo ")\"" >> game.txt
 done

@@ -8,7 +8,7 @@
 #include <iterator>
 #include <utility>
 
-#define CONSTEXPR
+#define CONSTEXPR constexpr
 
 constexpr int abs(int x)
 {

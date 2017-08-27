@@ -208,7 +208,7 @@ CONSTEXPR auto parse_score(GameString&& game_string)
     auto score_begin = find(str.cbegin(), str.cend(), ':') + 2;
     auto score_end = find(score_begin, str.cend(), '\n');
 
-    return stoi({score_begin, score_end - score_begin});
+    return stoi({score_begin, static_cast<int>(score_end - score_begin)});
 }
 
 template <class GameString>
@@ -220,7 +220,7 @@ CONSTEXPR auto parse_moves(GameString&& game_string)
     auto moves_begin = find(score_begin, str.cend(), ':') + 2;
     auto moves_end = find(moves_begin, str.cend(), '\n');
 
-    return stoi({moves_begin, moves_end - moves_begin});
+    return stoi({moves_begin, static_cast<int>(moves_end - moves_begin)});
 }
 
 template <class GameString>

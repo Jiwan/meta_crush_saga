@@ -135,12 +135,12 @@ private:
                 any_match |= true;
 
                 if (horizontal) {
-                    // std::cout << "Matched " << index << "," << i << std::endl; 
                     board_[index][i].state.matched = true; 
                 } else {
-                    // std::cout << "Matched " << i << "," << index << std::endl; 
                     board_[i][index].state.matched = true; 
                 }
+
+                ++score_;
             }
         };
 
@@ -185,8 +185,6 @@ private:
                 if (candy.type == last_type) {
                     ++same_type_counter;
                 } else {
-                    // std::cout << "j: " << j << std::endl;
-                    // std::cout << "count: " << same_type_counter << std::endl;
                     if(same_type_counter >= 3) {
                         mark_range_as_matched(j - same_type_counter, j, i, false);
                     }
@@ -249,6 +247,8 @@ private:
 
                         if (!find_matches()) {
                             swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                        } else {
+                            --moves_;
                         }
 
                         board_[cursor_x][cursor_y].state.hover = true;
@@ -279,7 +279,7 @@ private:
         for (int i = 0; i < RowCount; ++i) {
             for (int j = 0; j < ColumnCount; ++j) {
                 if (p(board_[i][j])) {
-                    return std::make_pair(i, j ); 
+                    return std::make_pair(i, j); 
                 }
             }
         }
