@@ -24,10 +24,6 @@ public:
 
     CONSTEXPR game_engine& update(KeyboardInput input)
     {
-        if (moves_ <= 0) {
-            return *this;
-        }
-
         bool board_updating = falldown() | generate();
 
         if (board_updating) {
@@ -237,6 +233,9 @@ private:
                 auto selected = find_if([](const candy& c){ return c.state.selected; });
 
                 if (selected) {
+                    if (moves_ <= 0) {
+                        break;
+                    }
                     auto [selected_x, selected_y] = selected.value();
 
                     if (abs(selected_x - cursor_x) <=1 && abs(selected_y - cursor_y) <= 1) {
