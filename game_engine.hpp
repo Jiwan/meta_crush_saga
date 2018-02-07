@@ -246,6 +246,7 @@ private:
 
                         if (!find_matches()) {
                             swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                            board_[selected_x][selected_y].state.selected = true;
                         } else {
                             --moves_;
                         }
