@@ -233,13 +233,13 @@ private:
                 auto selected = find_if([](const candy& c){ return c.state.selected; });
 
                 if (selected) {
-                    if (moves_ <= 0) {
-                        break;
-                    }
                     auto [selected_x, selected_y] = selected.value();
                     auto distance_to_selected = abs(selected_x - cursor_x) + abs(selected_y - cursor_y);
 
                     if ((distance_to_selected) == 1) {
+                        if (moves_ <= 0) {
+                            break;
+                        }
                         board_[selected_x][selected_y].state.selected = false;
                         board_[cursor_x][cursor_y].state.hover = false;
                         
