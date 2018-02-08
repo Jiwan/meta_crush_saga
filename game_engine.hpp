@@ -233,12 +233,13 @@ private:
                 auto selected = find_if([](const candy& c){ return c.state.selected; });
 
                 if (selected) {
-                    if (moves_ <= 0) {
-                        break;
-                    }
                     auto [selected_x, selected_y] = selected.value();
+                    auto distance_to_selected = abs(selected_x - cursor_x) + abs(selected_y - cursor_y);
 
-                    if (abs(selected_x - cursor_x) <=1 && abs(selected_y - cursor_y) <= 1) {
+                    if ((distance_to_selected) == 1) {
+                        if (moves_ <= 0) {
+                            break;
+                        }
                         board_[selected_x][selected_y].state.selected = false;
                         board_[cursor_x][cursor_y].state.hover = false;
                         
@@ -246,13 +247,15 @@ private:
 
                         if (!find_matches()) {
                             swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                            board_[selected_x][selected_y].state.selected = true;
                         } else {
                             --moves_;
                         }
-
-                        board_[cursor_x][cursor_y].state.hover = true;
+                    } else if (distance_to_selected == 0) {
+                        board_[selected_x][selected_y].state.selected = false;
                     }
 
+                    board_[cursor_x][cursor_y].state.hover = true;
                 } else {
                     board_[cursor_x][cursor_y].state.selected = true;
                 }
