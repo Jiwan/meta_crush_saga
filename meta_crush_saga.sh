@@ -9,11 +9,15 @@ keypressed='None'
 while :
 do
     epoch_ms=$(date +%s%3N)
-    
-    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms"  &
-    wait
+
+    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms"
 
     if [ $? -ne 0 ]; then
+        echo "      ---------------------------"
+        echo "      -                         -"
+        echo "      -        GAME OVER        -"
+        echo "      -                         -"
+        echo "      ---------------------------"
         break
     fi
 
