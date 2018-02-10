@@ -1,6 +1,7 @@
 #ifndef META_CRUSH_SAGA_RANDOM_HPP
 #define META_CRUSH_SAGA_RANDOM_HPP
 
+#include <cstdint>
 
 class random_generator
 {
@@ -20,4 +21,4 @@ public:
     std::uint16_t prev_;
 };
 
-#endif //META_CRUSH_SAGA_RANDOM_HPP  
+#endif //META_CRUSH_SAGA_RANDOM_HPP

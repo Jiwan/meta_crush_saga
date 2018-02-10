@@ -1,6 +1,12 @@
 #ifndef META_CRUSH_SAGA_CONSTEXPR_STRING_VIEW_HPP
 #define META_CRUSH_SAGA_CONSTEXPR_STRING_VIEW_HPP
 
+#include <algorithm>
+#include <cstddef>
+#include <stdexcept>
+
+#include "constexpr_string.hpp"
+
 class constexpr_string_view
 {
 public:
