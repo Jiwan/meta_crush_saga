@@ -5,6 +5,7 @@
 #ifndef META_CRUSH_SAGA_BOARD_HPP
 #define META_CRUSH_SAGA_BOARD_HPP
 
+#include <array>
 #include <iostream>
 #include <utility>
 
