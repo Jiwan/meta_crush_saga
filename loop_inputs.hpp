@@ -7,13 +7,13 @@
 constexpr KeyboardInput keyboard_input = KeyboardInput::KEYBOARD_INPUT;
 constexpr long long epoch_ms = EPOCH_MS;
 
-constexpr auto game_string = []() constexpr
+constexpr auto get_game_state_string = []() constexpr
 {
-    auto game = constexpr_string(
+    auto game_state_string = constexpr_string(
 #include "current_state.txt"
     );
 
-    return game;
+    return game_state_string;
 };
 
 #endif // META_CRUSH_SAGA_LOOP_INPUTS_HPP

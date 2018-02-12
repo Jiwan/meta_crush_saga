@@ -24,7 +24,7 @@ do
     clear
     
     current_state=$(./renderer)
-    echo current_state
+    echo $current_state
 
     while :
     do 
@@ -70,6 +70,6 @@ do
     done
 
     echo "R\"(" > current_state.txt
-    echo $current_state >> game.txt
+    echo $current_state >> current_state.txt
     echo ")\"" >> current_state.txt
 done

@@ -9,7 +9,7 @@
 
 int main()
 {
-    CONSTEXPR auto game = parse_game(game_string);
+    CONSTEXPR auto game = parse_game(get_game_state_string);
     CONSTEXPR auto engine = game_engine(std::get<0>(game), std::get<1>(game), std::get<2>(game), epoch_ms)
                                    .update(keyboard_input);
 
