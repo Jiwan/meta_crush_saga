@@ -182,9 +182,9 @@ constexpr auto isolate_board_game(auto&& str)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_board(GameString&& game_string)
+CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 {
-    constexpr auto board_string = isolate_board_game(game_string()); 
+    constexpr auto board_string = isolate_board_game(get_game_state_string());
 
     constexpr int column_count = parse_board_column_count(board_string);
     constexpr int row_count = parse_board_row_count(board_string);
@@ -201,9 +201,9 @@ CONSTEXPR auto parse_board(GameString&& game_string)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_score(GameString&& game_string)
+CONSTEXPR auto parse_score(GameString&& get_game_state_string)
 {
-    constexpr auto str = game_string();
+    constexpr auto str = get_game_state_string();
 
     auto score_begin = find(str.cbegin(), str.cend(), ':') + 2;
     auto score_end = find(score_begin, str.cend(), '\n');
@@ -212,9 +212,9 @@ CONSTEXPR auto parse_score(GameString&& game_string)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_moves(GameString&& game_string)
+CONSTEXPR auto parse_moves(GameString&& get_game_state_string)
 {
-    constexpr auto str = game_string();
+    constexpr auto str = get_game_state_string();
 
     auto score_begin = find(str.cbegin(), str.cend(), ':') + 1;
     auto moves_begin = find(score_begin, str.cend(), ':') + 2;
@@ -224,11 +224,11 @@ CONSTEXPR auto parse_moves(GameString&& game_string)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_game_state(GameString&& game_string)
+CONSTEXPR auto parse_game_state(GameString&& get_game_state_string)
 {
-    CONSTEXPR auto board = parse_board(game_string);
-    CONSTEXPR auto score = parse_score(game_string);
-    CONSTEXPR auto moves = parse_moves(game_string);
+    CONSTEXPR auto board = parse_board(get_game_state_string);
+    CONSTEXPR auto score = parse_score(get_game_state_string);
+    CONSTEXPR auto moves = parse_moves(get_game_state_string);
 
     return std::make_tuple(board, score, moves);
 }
