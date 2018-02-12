@@ -224,7 +224,7 @@ CONSTEXPR auto parse_moves(GameString&& game_string)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_game(GameString&& game_string)
+CONSTEXPR auto parse_game_state(GameString&& game_string)
 {
     CONSTEXPR auto board = parse_board(game_string);
     CONSTEXPR auto score = parse_score(game_string);
@@ -300,7 +300,7 @@ CONSTEXPR auto print_moves(auto& engine)
     return constexpr_string("> moves: ").append(itos(engine.get_moves())).append(constexpr_string("\n"));
 }
 
-CONSTEXPR auto print_game(auto& engine)
+CONSTEXPR auto print_game_state(auto& engine)
 {
     auto result = constexpr_string("      Meta crush saga      \n");
     auto board = print_board_to_array(engine.get_board());
