@@ -16,9 +16,6 @@ int main()
     CONSTEXPR auto array = print_game_state(updated_engine);
 
     for (const char& c : array) {
-        if (c == '\0')
-            std::cout << "<< here";
-            
         std::cout << c;
     }
 
