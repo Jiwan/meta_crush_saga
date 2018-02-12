@@ -10,7 +10,7 @@ constexpr long long epoch_ms = EPOCH_MS;
 constexpr auto game_string = []() constexpr
 {
     auto game = constexpr_string(
-#include "game.txt"
+#include "current_state.txt"
     );
 
     return game;

@@ -10,7 +10,7 @@ while :
 do
     epoch_ms=$(date +%s%3N)
 
-    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms"
+    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms" -o renderer
 
     if [ $? -ne 0 ]; then
         echo "      ---------------------------"
@@ -23,8 +23,8 @@ do
 
     clear
     
-    board_output=$(./a.out)
-    echo $board_output
+    current_state=$(./renderer)
+    echo current_state
 
     while :
     do 
@@ -69,7 +69,7 @@ do
         fi  
     done
 
-    echo "R\"(" > game.txt
-    echo $board_output >> game.txt
-    echo ")\"" >> game.txt
+    echo "R\"(" > current_state.txt
+    echo $current_state >> game.txt
+    echo ")\"" >> current_state.txt
 done
