@@ -1,0 +1,25 @@
+R"(
+      Meta crush saga      
+  ------------------------  
+ |                        | 
+ | R  B  G  G  R  R  G  R | 
+ |                        | 
+ |                        | 
+ | Y  Y  G  B  B  Y  B  R | 
+ |                        | 
+ |                        | 
+ | R  B  Y  R  B  G  Y  G | 
+ |                        | 
+ |                        | 
+ | R  Y  B    ( )    G  Y | 
+ |                        | 
+ |                        | 
+ | B  G  Y  R           R | 
+ |                        | 
+ |                        | 
+ | R  Y  B  G  Y  B  B  G | 
+ |                        | 
+  ------------------------  
+> score: 9018
+> moves: 25
+)"
