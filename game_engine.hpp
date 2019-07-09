@@ -232,14 +232,11 @@ private:
 
     CONSTEXPR void handle_input(KeyboardInput input)
     {
-        int cursor_x = hovered_x_;
-        int cursor_y = hovered_y_;
-
         auto move_cursor_relative = [=](int x, int y) constexpr {            
-            if (static_cast<int>(cursor_x) + x < 0 || static_cast<int>(cursor_x) + x >= RowCount) {
+            if (static_cast<int>(hovered_x_) + x < 0 || static_cast<int>(hovered_x_) + x >= RowCount) {
                 x = 0;
             }
-            if (static_cast<int>(cursor_y) + y < 0 || static_cast<int>(cursor_y) + y >= ColumnCount) {
+            if (static_cast<int>(hovered_y_) + y < 0 || static_cast<int>(hovered_y_) + y >= ColumnCount) {
                 y = 0; 
             }
 
@@ -266,17 +263,17 @@ private:
                 {
                     int selected_x = selected_x_;
                     int selected_y = selected_y_;
-                    auto distance_to_selected = abs(selected_x - cursor_x) + abs(selected_y - cursor_y);
+                    auto distance_to_selected = abs(selected_x - hovered_x_) + abs(selected_y - hovered_y_);
 
                     if ((distance_to_selected) == 1) {
                         if (moves_ <= 0) {
                             break;
                         }
                         any_selected_ = false;
-                        swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                        swap(board_[selected_x][selected_y], board_[hovered_x_][hovered_y_]);
 
                         if (!find_matches()) {
-                            swap(board_[selected_x][selected_y], board_[cursor_x][cursor_y]);
+                            swap(board_[selected_x][selected_y], board_[hovered_x_][hovered_y_]);
                             any_selected_ = true;
                         } else {
                             --moves_;
@@ -294,30 +291,6 @@ private:
         }
     }
 
-    CONSTEXPR std::pair<int, int> find_cursor()
-    {
-        auto coord = find_if([](const candy& c){ return c.state.hover; });
-
-        if (coord) {
-            return coord.value();
-        }
-
-        return find_if([](const candy& c){ return c.state.selected; }).value();
-    }
-
-    template <class Predicate>
-    CONSTEXPR std::optional<std::pair<int, int>> find_if(Predicate&& p)
-    {
-        for (int i = 0; i < RowCount; ++i) {
-            for (int j = 0; j < ColumnCount; ++j) {
-                if (p(board_[i][j])) {
-                    return std::make_pair(i, j); 
-                }
-            }
-        }
-
-        return std::nullopt;
-    }
 
 private:
     random_generator rg_;
