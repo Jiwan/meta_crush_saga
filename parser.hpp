@@ -188,16 +188,48 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 
     constexpr int column_count = parse_board_column_count(board_string);
     constexpr int row_count = parse_board_row_count(board_string);
+    bool any_hovered = false;
+    int hovered_x = 0;
+    int hovered_y = 0;
+    bool any_selected = false;
+    int selected_x = 0;
+    int selected_y = 0;
 
     std::array<std::array<candy, column_count>, row_count> board{};
 
     for (int i = 0; i < row_count; ++i) {
         for (int j = 0; j < column_count; ++j) {
-            board[i][j] = parse_candy(board_string, i, j, column_count);
+            const int row_character_count = (column_count * candy_size) + 1;
+            const int candy_area_index = (i * (row_character_count * candy_size)) + (j * candy_size);
+            const int candy_type_index = candy_area_index + (row_character_count * candy_type_offset) + candy_type_offset;
+            const int candy_state_selected_or_hover = candy_type_index - candy_type_offset;
+            const int candy_matched = candy_area_index + candy_type_offset;
+
+            board[i][j] =  candy {
+                decode_candy_type(board_string[candy_type_index]),
+                decode_candy_state(board_string[candy_state_selected_or_hover], board_string[candy_matched])
+            };
+
+            if(board_string[candy_state_selected_or_hover] == '[') {
+                any_selected = true;
+                selected_x = i;
+                selected_y = j;
+            } else if(board_string[candy_state_selected_or_hover] == '(') {
+                any_hovered = true;
+                hovered_x = i;
+                hovered_y = j;
+            }else if( board_string[candy_state_selected_or_hover] != ' ' && board_string[candy_state_selected_or_hover] != '*' ) {
+                throw std::runtime_error("Invalid hover state!");
+            }
         }
     }
 
-    return board;
+    if((!any_hovered) && any_selected) {
+        hovered_x = selected_x;
+        hovered_y = selected_y;
+    }
+
+    return std::make_tuple(board, hovered_x, hovered_y, any_selected, selected_x, selected_y);
 }
 
 template <class GameString>
@@ -234,8 +266,10 @@ CONSTEXPR auto parse_game_state(GameString&& get_game_state_string)
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>
-CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board)
+CONSTEXPR auto print_board_to_array(const game_engine<RowCount, ColumnCount>& engine)
 {
+    auto board = engine.get_board();
+
     constexpr int row_padding = 5; // space begin + | + | + space end + \n
     constexpr int width = ((ColumnCount * candy_size) + row_padding);
 
@@ -287,6 +321,22 @@ CONSTEXPR auto print_board_to_array(const board<RowCount, ColumnCount>& board)
 
     EPILOG();
 
+    auto hovered_x = engine.get_hovered_x();
+    auto hovered_y = engine.get_hovered_y();
+    auto hovered_center = (hovered_y * candy_size + 3) + (hovered_x * candy_size + 2) * width;
+    result[hovered_center - 1] = '(';
+    result[hovered_center + 1] = ')';
+
+
+    if(engine.is_any_selected())
+    {
+        auto selected_x = engine.get_selected_x();
+        auto selected_y = engine.get_selected_y();
+        auto selected_center = (selected_y * candy_size + 3) + (selected_x * candy_size + 2) * width;
+        result[selected_center - 1] = '[';
+        result[selected_center + 1] = ']';
+    }
+
     return result;
 }
 
@@ -303,7 +353,7 @@ CONSTEXPR auto print_moves(auto& engine)
 CONSTEXPR auto print_game_state(auto& engine)
 {
     auto result = constexpr_string("      Meta crush saga      \n");
-    auto board = print_board_to_array(engine.get_board());
+    auto board = print_board_to_array(engine);
     auto score = print_score(engine);
     auto moves = print_moves(engine);
 
