@@ -12,19 +12,30 @@
 
 
 template <std::size_t RowCount, std::size_t ColumnCount>
+struct BoardExtented {
+    std::array<std::array<candy, ColumnCount>, RowCount> board;
+    int hovered_x;
+    int hovered_y;
+    bool any_selected;
+    int selected_x;
+    int selected_y;
+};
+
+
+template <std::size_t RowCount, std::size_t ColumnCount>
 class game_engine
 {
 public:
-    CONSTEXPR game_engine(const std::tuple< std::array<std::array<candy, ColumnCount>, RowCount>, int, int, bool, int, int > board_extended, int score, int moves, long long epoch_ms) :
-        board_(std::get<0>(board_extended)),
+    CONSTEXPR game_engine(const BoardExtented<RowCount, ColumnCount>& board_extended, int score, int moves, long long epoch_ms) :
+        board_(board_extended.board),
         score_(score),
         moves_(moves),
         rg_(static_cast<std::uint16_t>(epoch_ms)),
-        hovered_x_(std::get<1>(board_extended)),
-        hovered_y_(std::get<2>(board_extended)),
-        any_selected_(std::get<3>(board_extended)),
-        selected_x_(std::get<4>(board_extended)),
-        selected_y_(std::get<5>(board_extended))
+        hovered_x_(board_extended.hovered_x),
+        hovered_y_(board_extended.hovered_y),
+        any_selected_(board_extended.any_selected),
+        selected_x_(board_extended.selected_x),
+        selected_y_(board_extended.selected_y)
     {
     }
 

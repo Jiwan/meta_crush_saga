@@ -186,7 +186,7 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
         hovered_y = selected_y;
     }
 
-    return std::make_tuple(board, hovered_x, hovered_y, any_selected, selected_x, selected_y);
+    return BoardExtented<row_count, column_count>{board, hovered_x, hovered_y, any_selected, selected_x, selected_y};
 }
 
 template <class GameString>
