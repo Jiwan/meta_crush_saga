@@ -20,7 +20,7 @@ enum class CandyType
     Yellow
 };
 
-constexpr int candy_type_count = 4; // Excluding None.
+constexpr int candy_type_count = 4;  // Excluding None.
 
 struct CandyState
 {
@@ -36,4 +36,4 @@ struct candy
 template <int RowCount, int ColumnCount>
 using board = std::array<std::array<candy, ColumnCount>, RowCount>;
 
-#endif //TEMPLATE_CRUSH_SAGA_BOARD_HPP
+#endif  //TEMPLATE_CRUSH_SAGA_BOARD_HPP

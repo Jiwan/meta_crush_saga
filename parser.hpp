@@ -8,9 +8,9 @@
 #include <tuple>
 
 #include "board.hpp"
-#include "game_engine.hpp"
-#include "constexpr_string_view.hpp"
 #include "constexpr_string.hpp"
+#include "constexpr_string_view.hpp"
+#include "game_engine.hpp"
 #include "utils.hpp"
 
 CONSTEXPR int stoi(const constexpr_string_view& s)
@@ -20,7 +20,7 @@ CONSTEXPR int stoi(const constexpr_string_view& s)
     for (const char c : s) {
         result = result * 10 + (c - '0');
     }
-    
+
     return result;
 }
 
@@ -47,14 +47,19 @@ constexpr char encode_candy_type(CandyType t)
 
 constexpr CandyType decode_candy_type(char c)
 {
-    switch (c)
-    {
-        case ' ': return CandyType::None;
-        case 'R': return CandyType::Red;
-        case 'G': return CandyType::Green;
-        case 'B': return CandyType::Blue;
-        case 'Y': return CandyType::Yellow;
-        default: throw std::runtime_error("Invalid candy type");
+    switch (c) {
+        case ' ':
+            return CandyType::None;
+        case 'R':
+            return CandyType::Red;
+        case 'G':
+            return CandyType::Green;
+        case 'B':
+            return CandyType::Blue;
+        case 'Y':
+            return CandyType::Yellow;
+        default:
+            throw std::runtime_error("Invalid candy type");
     }
 }
 
@@ -100,9 +105,9 @@ constexpr auto parse_board_column_count(const constexpr_string_view& str)
 }
 
 constexpr auto parse_board_row_count(const constexpr_string_view& str)
-{   
+{
     int row_count = count(str.cbegin(), str.cend(), '\n');
-    
+
     if (str[str.size() - 1] != '\n')
         ++row_count;
 
@@ -116,10 +121,9 @@ constexpr auto isolate_board_game(auto&& str)
 
     auto it = str.begin();
 
-    while (true)
-    {
+    while (true) {
         auto board_left = find(it, str.end(), '|');
-        
+
         if (board_left == str.end())
             break;
 
@@ -127,14 +131,14 @@ constexpr auto isolate_board_game(auto&& str)
 
         auto board_right = find(it, str.end(), '|');
         auto endline = find(it, str.end(), '\n');
-        
+
         it = str.erase(board_right, endline);
-        
+
         ++it;
     }
 
     str.erase(it, str.end());
-    
+
     return str;
 }
 
@@ -162,31 +166,31 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
             const int candy_state_selected_or_hover = candy_type_index - candy_type_offset;
             const int candy_matched = candy_area_index + candy_type_offset;
 
-            board[i][j] =  candy {
+            board[i][j] = candy{
                 decode_candy_type(board_string[candy_type_index]),
                 decode_candy_state(board_string[candy_state_selected_or_hover], board_string[candy_matched])
             };
 
-            if(board_string[candy_state_selected_or_hover] == '[') {
+            if (board_string[candy_state_selected_or_hover] == '[') {
                 any_selected = true;
                 selected_x = i;
                 selected_y = j;
-            } else if(board_string[candy_state_selected_or_hover] == '(') {
+            } else if (board_string[candy_state_selected_or_hover] == '(') {
                 any_hovered = true;
                 hovered_x = i;
                 hovered_y = j;
-            }else if( board_string[candy_state_selected_or_hover] != ' ' && board_string[candy_state_selected_or_hover] != '*' ) {
+            } else if (board_string[candy_state_selected_or_hover] != ' ' && board_string[candy_state_selected_or_hover] != '*') {
                 throw std::runtime_error("Invalid hover state!");
             }
         }
     }
 
-    if((!any_hovered) && any_selected) {
+    if ((!any_hovered) && any_selected) {
         hovered_x = selected_x;
         hovered_y = selected_y;
     }
 
-    return BoardExtented<row_count, column_count>{board, hovered_x, hovered_y, any_selected, selected_x, selected_y};
+    return BoardExtented<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y };
 }
 
 template <class GameString>
@@ -197,7 +201,7 @@ CONSTEXPR auto parse_score(GameString&& get_game_state_string)
     auto score_begin = find(str.cbegin(), str.cend(), ':') + 2;
     auto score_end = find(score_begin, str.cend(), '\n');
 
-    return stoi({score_begin, static_cast<int>(score_end - score_begin)});
+    return stoi({ score_begin, static_cast<int>(score_end - score_begin) });
 }
 
 template <class GameString>
@@ -209,7 +213,7 @@ CONSTEXPR auto parse_moves(GameString&& get_game_state_string)
     auto moves_begin = find(score_begin, str.cend(), ':') + 2;
     auto moves_end = find(moves_begin, str.cend(), '\n');
 
-    return stoi({moves_begin, static_cast<int>(moves_end - moves_begin)});
+    return stoi({ moves_begin, static_cast<int>(moves_end - moves_begin) });
 }
 
 template <class GameString>
@@ -227,26 +231,37 @@ CONSTEXPR auto print_board_to_array(const game_engine<RowCount, ColumnCount>& en
 {
     auto board = engine.get_board();
 
-    constexpr int row_padding = 5; // space begin + | + | + space end + \n
+    constexpr int row_padding = 5;  // space begin + | + | + space end + \n
     constexpr int width = ((ColumnCount * candy_size) + row_padding);
 
-    constexpr auto e = [](CandyState s) constexpr { return encode_candy_state(s); };
+    constexpr auto e = [](CandyState s) constexpr
+    {
+        return encode_candy_state(s);
+    };
 
     constexpr int board_size_in_char = width * ((RowCount * candy_size) + 2);
     constexpr_string<board_size_in_char> result;
 
     int cursor = 0;
-    
-#define W(C) result[cursor++] = C
-#define NEWLINE() W(' '); W('|')
-#define ENDLINE() W('|'); W(' '); W('\n')
 
-#define EPILOG() \
-    W(' ');W(' '); \
+#define W(C) result[cursor++] = C
+#define NEWLINE() \
+    W(' ');       \
+    W('|')
+#define ENDLINE() \
+    W('|');       \
+    W(' ');       \
+    W('\n')
+
+#define EPILOG()                                    \
+    W(' ');                                         \
+    W(' ');                                         \
     for (int r = 0; r < width - row_padding; ++r) { \
-        W('-'); \
-    } \
-    W(' ');W(' ');W('\n')
+        W('-');                                     \
+    }                                               \
+    W(' ');                                         \
+    W(' ');                                         \
+    W('\n')
 
     EPILOG();
 
@@ -254,7 +269,9 @@ CONSTEXPR auto print_board_to_array(const game_engine<RowCount, ColumnCount>& en
         NEWLINE();
 
         for (const auto& column : row) {
-            W(' '); W(e(column.state).top); W(' ');
+            W(' ');
+            W(e(column.state).top);
+            W(' ');
         }
 
         ENDLINE();
@@ -270,7 +287,9 @@ CONSTEXPR auto print_board_to_array(const game_engine<RowCount, ColumnCount>& en
         NEWLINE();
 
         for (const auto& column : row) {
-            W(' '); W(e(column.state).bottom); W(' ');  
+            W(' ');
+            W(e(column.state).bottom);
+            W(' ');
         }
 
         ENDLINE();
@@ -284,9 +303,7 @@ CONSTEXPR auto print_board_to_array(const game_engine<RowCount, ColumnCount>& en
     result[hovered_center - 1] = '(';
     result[hovered_center + 1] = ')';
 
-
-    if(engine.is_any_selected())
-    {
+    if (engine.is_any_selected()) {
         auto selected_x = engine.get_selected_x();
         auto selected_y = engine.get_selected_y();
         auto selected_center = (selected_y * candy_size + 3) + (selected_x * candy_size + 2) * width;
@@ -317,5 +334,4 @@ CONSTEXPR auto print_game_state(auto& engine)
     return result.append(board).append(score).append(moves);
 }
 
-
-#endif //TEMPLATE_CRUSH_SAGA_PARSER_HPP
+#endif  //TEMPLATE_CRUSH_SAGA_PARSER_HPP

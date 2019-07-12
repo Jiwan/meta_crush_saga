@@ -3,16 +3,16 @@
 
 #include <cstddef>
 #include <optional>
-#include <variant>
 #include <tuple>
+#include <variant>
 
 #include "board.hpp"
 #include "inputs.hpp"
 #include "random.hpp"
 
-
 template <std::size_t RowCount, std::size_t ColumnCount>
-struct BoardExtented {
+struct BoardExtented
+{
     std::array<std::array<candy, ColumnCount>, RowCount> board;
     int hovered_x;
     int hovered_y;
@@ -21,21 +21,12 @@ struct BoardExtented {
     int selected_y;
 };
 
-
 template <std::size_t RowCount, std::size_t ColumnCount>
 class game_engine
 {
 public:
-    CONSTEXPR game_engine(const BoardExtented<RowCount, ColumnCount>& board_extended, int score, int moves, long long epoch_ms) :
-        board_(board_extended.board),
-        score_(score),
-        moves_(moves),
-        rg_(static_cast<std::uint16_t>(epoch_ms)),
-        hovered_x_(board_extended.hovered_x),
-        hovered_y_(board_extended.hovered_y),
-        any_selected_(board_extended.any_selected),
-        selected_x_(board_extended.selected_x),
-        selected_y_(board_extended.selected_y)
+    CONSTEXPR game_engine(const BoardExtented<RowCount, ColumnCount>& board_extended, int score, int moves, long long epoch_ms)
+        : board_(board_extended.board), score_(score), moves_(moves), rg_(static_cast<std::uint16_t>(epoch_ms)), hovered_x_(board_extended.hovered_x), hovered_y_(board_extended.hovered_y), any_selected_(board_extended.any_selected), selected_x_(board_extended.selected_x), selected_y_(board_extended.selected_y)
     {
     }
 
@@ -105,19 +96,18 @@ public:
     }
 
 private:
-
     CONSTEXPR bool falldown()
     {
         bool any_falldown = false;
 
         for (int j = 0; j < ColumnCount; ++j) {
             bool has_gap = false;
-            
-            for (int i = RowCount - 1; i >= 0 ; --i) {
+
+            for (int i = RowCount - 1; i >= 0; --i) {
                 if (!has_gap && board_[i][j].type == CandyType::None) {
                     has_gap = true;
                 } else if (has_gap) {
-                    board_[i + 1][j].type = board_[i][j].type; 
+                    board_[i + 1][j].type = board_[i][j].type;
                 }
             }
 
@@ -168,14 +158,15 @@ private:
     {
         bool any_match = false;
 
-        auto mark_range_as_matched = [this, &any_match](int x, int y, int index, bool horizontal) constexpr {
+        auto mark_range_as_matched = [ this, &any_match ](int x, int y, int index, bool horizontal) constexpr
+        {
             for (int i = x; i < y; ++i) {
                 any_match |= true;
 
                 if (horizontal) {
-                    board_[index][i].state.matched = true; 
+                    board_[index][i].state.matched = true;
                 } else {
-                    board_[i][index].state.matched = true; 
+                    board_[i][index].state.matched = true;
                 }
 
                 ++score_;
@@ -191,22 +182,22 @@ private:
             CandyType last_type = CandyType::None;
 
             for (int j = 0; j < ColumnCount; ++j) {
-                const auto& candy = board_[i][j]; 
+                const auto& candy = board_[i][j];
 
                 if (candy.type == last_type) {
                     ++same_type_counter;
                 } else {
-                    if(same_type_counter >= 3) {
+                    if (same_type_counter >= 3) {
                         mark_range_as_matched(j - same_type_counter, j, i, true);
                     }
-                    
+
                     same_type_counter = 1;
                 }
 
                 last_type = candy.type;
             }
 
-            if(same_type_counter >= 3) {
+            if (same_type_counter >= 3) {
                 mark_range_as_matched(ColumnCount - same_type_counter, ColumnCount, i, true);
             }
         }
@@ -218,22 +209,22 @@ private:
             CandyType last_type = CandyType::None;
 
             for (int j = 0; j < RowCount; ++j) {
-                const auto& candy = board_[j][i]; 
+                const auto& candy = board_[j][i];
 
                 if (candy.type == last_type) {
                     ++same_type_counter;
                 } else {
-                    if(same_type_counter >= 3) {
+                    if (same_type_counter >= 3) {
                         mark_range_as_matched(j - same_type_counter, j, i, false);
                     }
-                    
+
                     same_type_counter = 1;
                 }
 
                 last_type = candy.type;
             }
 
-            if(same_type_counter >= 3) {
+            if (same_type_counter >= 3) {
                 mark_range_as_matched(RowCount - same_type_counter, RowCount, i, false);
             }
         }
@@ -243,22 +234,22 @@ private:
 
     CONSTEXPR void handle_input(KeyboardInput input)
     {
-        auto move_cursor_relative = [=](int x, int y) constexpr {            
+        auto move_cursor_relative = [=](int x, int y) constexpr
+        {
             if (static_cast<int>(hovered_x_) + x < 0 || static_cast<int>(hovered_x_) + x >= RowCount) {
                 x = 0;
             }
             if (static_cast<int>(hovered_y_) + y < 0 || static_cast<int>(hovered_y_) + y >= ColumnCount) {
-                y = 0; 
+                y = 0;
             }
 
-            hovered_x_ +=x;
-            hovered_y_ +=y;
+            hovered_x_ += x;
+            hovered_y_ += y;
         };
 
-        switch (input)
-        {
+        switch (input) {
             case KeyboardInput::Left:
-                move_cursor_relative(0, -1);                
+                move_cursor_relative(0, -1);
                 break;
             case KeyboardInput::Right:
                 move_cursor_relative(0, 1);
@@ -270,8 +261,7 @@ private:
                 move_cursor_relative(1, 0);
                 break;
             case KeyboardInput::Space:
-                if (any_selected_)
-                {
+                if (any_selected_) {
                     int selected_x = selected_x_;
                     int selected_y = selected_y_;
                     auto distance_to_selected = abs(selected_x - hovered_x_) + abs(selected_y - hovered_y_);
@@ -302,7 +292,6 @@ private:
         }
     }
 
-
 private:
     random_generator rg_;
     board<RowCount, ColumnCount> board_;
@@ -315,4 +304,4 @@ private:
     int hovered_y_;
 };
 
-#endif //TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP
+#endif  //TEMPLATE_CRUSH_SAGA_GAME_ENGINE_HPP

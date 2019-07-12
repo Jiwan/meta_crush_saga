@@ -5,21 +5,21 @@ R"(
  | R  B  G  B  B  Y  G  R | 
  |                        | 
  |                        | 
- | Y  Y  G  R  B  G  B  R | 
+ | Y  Y  B  R  B  G  B  R | 
  |                        | 
  |                        | 
- | R  B  Y  R  G  R  Y  G | 
+ | R  B  G  R  G  R  Y  G | 
  |                        | 
  |                        | 
- | R  Y  B  Y (R) Y  G  Y | 
+ | R  B (G) Y  R  Y  G  Y | 
  |                        | 
  |                        | 
- | B  G  Y  R  Y  G  G  R | 
+ | B  G  G  R  Y  G  G  R | 
  |                        | 
  |                        | 
  | R  Y  B  G  Y  B  B  G | 
  |                        | 
   ------------------------  
-> score: 9009
-> moves: 27
+> score: 9012
+> moves: 26
 )"
