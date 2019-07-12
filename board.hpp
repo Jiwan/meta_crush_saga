@@ -25,8 +25,6 @@ constexpr int candy_type_count = 4; // Excluding None.
 struct CandyState
 {
     bool matched;
-    bool selected;
-    bool hover;
 };
 
 struct candy
