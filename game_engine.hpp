@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <optional>
-#include <tuple>
 #include <variant>
 
 #include "board.hpp"
