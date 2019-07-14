@@ -233,7 +233,7 @@ private:
 
     CONSTEXPR void handle_input(KeyboardInput input)
     {
-        auto move_cursor_relative = [=](int x, int y) constexpr
+        auto move_cursor_relative = [this](int x, int y) constexpr
         {
             if (static_cast<int>(hovered_x_) + x < 0 || static_cast<int>(hovered_x_) + x >= static_cast<int>(RowCount)) {
                 x = 0;
