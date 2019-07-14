@@ -11,4 +11,4 @@ enum class KeyboardInput
     Space
 };
 
-#endif //META_CRUSH_SAGA_INPUTS_HPP
+#endif  //META_CRUSH_SAGA_INPUTS_HPP

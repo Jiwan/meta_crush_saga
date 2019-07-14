@@ -30,8 +30,8 @@ class BuildTimeMeasurer:
         shutil.copy('./performance_test/' + game_field, 'current_state.txt')
         print('field = {:<15s} key = {:5s}    measuring '.format(
             game_field, kbdinput),
-              end='',
-              flush=True)
+            end='',
+            flush=True)
         for i in range(0, self.nsamples):
             print('.', end='', flush=True)
             results.append(

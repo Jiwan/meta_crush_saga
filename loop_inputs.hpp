@@ -16,4 +16,4 @@ constexpr auto get_game_state_string = []() constexpr
     return game_state_string;
 };
 
-#endif // META_CRUSH_SAGA_LOOP_INPUTS_HPP
+#endif  // META_CRUSH_SAGA_LOOP_INPUTS_HPP

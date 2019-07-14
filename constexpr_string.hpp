@@ -17,19 +17,21 @@ public:
     using const_iterator = const char*;
 
 public:
-    constexpr constexpr_string(): data_{}, size_{N}
+    constexpr constexpr_string()
+        : data_{}, size_{ N }
     {
-        
     }
 
-    constexpr constexpr_string(const char(&a)[N]): data_{}, size_(N - 1)
+    constexpr constexpr_string(const char (&a)[N])
+        : data_{}, size_(N - 1)
     {
         for (std::size_t i = 0; i < N; ++i) {
             data_[i] = a[i];
         }
     }
 
-    constexpr constexpr_string(const char* a, std::size_t size): data_{}, size_{size}
+    constexpr constexpr_string(const char* a, std::size_t size)
+        : data_{}, size_{ size }
     {
         for (std::size_t i = 0; i < N && i < size; ++i) {
             data_[i] = a[i];
@@ -37,7 +39,8 @@ public:
     }
 
     template <std::size_t M>
-    constexpr constexpr_string(const constexpr_string<M>& other) : data_{}, size_{N}
+    constexpr constexpr_string(const constexpr_string<M>& other)
+        : data_{}, size_{ N }
     {
         for (std::size_t i = 0; i < other.size(); ++i) {
             data_[i] = other[i];
@@ -45,7 +48,8 @@ public:
     }
 
     template <std::size_t M>
-    constexpr constexpr_string(const constexpr_string<M>& other, std::size_t size) : data_{}, size_{size}
+    constexpr constexpr_string(const constexpr_string<M>& other, std::size_t size)
+        : data_{}, size_{ size }
     {
         for (std::size_t i = 0; i < other.size(); ++i) {
             data_[i] = other[i];
@@ -90,11 +94,10 @@ public:
     }
 
     template <std::size_t M>
-    constexpr bool startswith(const char(&a)[M])
+    constexpr bool startswith(const char (&a)[M])
     {
         return startswith(constexpr_string<M>(a, M - 1));
     }
-
 
     constexpr constexpr_string<N> substr(std::size_t pos, std::size_t len = -1) const
     {
@@ -102,8 +105,8 @@ public:
             throw std::runtime_error("out of range");
         }
 
-        const std::size_t new_size = (len == -1)?  (size_ - pos): std::min(len, (size_ - pos));
-        return constexpr_string<N>(data_+ pos, new_size);
+        const std::size_t new_size = (len == -1) ? (size_ - pos) : std::min(len, (size_ - pos));
+        return constexpr_string<N>(data_ + pos, new_size);
     }
 
     template <std::size_t M>
@@ -115,10 +118,10 @@ public:
             output[size() + i] = other[i];
         }
 
-        return output; 
+        return output;
     }
 
-    constexpr const char* data() const 
+    constexpr const char* data() const
     {
         return data_;
     }
@@ -154,7 +157,7 @@ public:
     }
 
     constexpr iterator erase(iterator pos)
-    {  
+    {
         iterator it = pos;
 
         for (; it < end() - 1; ++it) {
@@ -185,4 +188,4 @@ private:
     std::size_t size_;
 };
 
-#endif //TEMPLATE_CRUSH_SAGA_CONSTEXPR_STRING_HPP
+#endif  //TEMPLATE_CRUSH_SAGA_CONSTEXPR_STRING_HPP
