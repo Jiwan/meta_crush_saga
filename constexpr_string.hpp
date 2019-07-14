@@ -105,7 +105,7 @@ public:
             throw std::runtime_error("out of range");
         }
 
-        const std::size_t new_size = (len == -1) ? (size_ - pos) : std::min(len, (size_ - pos));
+        const std::size_t new_size = (len == static_cast<std::size_t>(-1)) ? (size_ - pos) : std::min(len, (size_ - pos));
         return constexpr_string<N>(data_ + pos, new_size);
     }
 
