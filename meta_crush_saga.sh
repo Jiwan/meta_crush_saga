@@ -10,7 +10,7 @@ while :
 do
     epoch_ms=$(date +%s%3N)
 
-    g++ -std=c++1z main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms" -fconcepts -o renderer
+    g++ -std=c++2a -Wall -Wextra  main.cpp -DKEYBOARD_INPUT="$keypressed" -DEPOCH_MS="$epoch_ms" -fconcepts -o renderer
 
     if [ $? -ne 0 ]; then
         echo "      ---------------------------"

@@ -42,7 +42,7 @@ public:
 
     constexpr bool startswith(const constexpr_string_view& other)
     {
-        int i = 0;
+        std::size_t i = 0;
 
         for (; i < other.size() && i < size(); ++i) {
             if (ptr_[i] != other[i]) {
@@ -59,7 +59,7 @@ public:
             throw std::runtime_error("out of range");
         }
 
-        const std::size_t new_size = (len == -1) ? (size_ - pos) : std::min(len, (size_ - pos));
+        const std::size_t new_size = (len == static_cast<std::size_t>(-1)) ? (size_ - pos) : std::min(len, (size_ - pos));
         return constexpr_string_view(ptr_ + pos, new_size);
     }
 

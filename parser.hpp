@@ -82,7 +82,7 @@ constexpr state_decoration encode_candy_state(CandyState s)
     return dec;
 }
 
-CONSTEXPR CandyState decode_candy_state(char left_char, char up_char)
+CONSTEXPR CandyState decode_candy_state(char up_char)
 {
     CandyState state = { false };
 
@@ -168,7 +168,7 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 
             board[i][j] = candy{
                 decode_candy_type(board_string[candy_type_index]),
-                decode_candy_state(board_string[candy_state_selected_or_hover], board_string[candy_matched])
+                decode_candy_state(board_string[candy_matched])
             };
 
             if (board_string[candy_state_selected_or_hover] == '[') {

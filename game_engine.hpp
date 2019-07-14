@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <optional>
-#include <tuple>
 #include <variant>
 
 #include "board.hpp"
@@ -26,7 +25,7 @@ class game_engine
 {
 public:
     CONSTEXPR game_engine(const BoardExtented<RowCount, ColumnCount>& board_extended, int score, int moves, long long epoch_ms)
-        : board_(board_extended.board), score_(score), moves_(moves), rg_(static_cast<std::uint16_t>(epoch_ms)), hovered_x_(board_extended.hovered_x), hovered_y_(board_extended.hovered_y), any_selected_(board_extended.any_selected), selected_x_(board_extended.selected_x), selected_y_(board_extended.selected_y)
+        : rg_(static_cast<std::uint16_t>(epoch_ms)), board_(board_extended.board), score_(score), moves_(moves), any_selected_(board_extended.any_selected), selected_x_(board_extended.selected_x), selected_y_(board_extended.selected_y), hovered_x_(board_extended.hovered_x), hovered_y_(board_extended.hovered_y)
     {
     }
 
@@ -100,7 +99,7 @@ private:
     {
         bool any_falldown = false;
 
-        for (int j = 0; j < ColumnCount; ++j) {
+        for (std::size_t j = 0; j < ColumnCount; ++j) {
             bool has_gap = false;
 
             for (int i = RowCount - 1; i >= 0; --i) {
@@ -177,11 +176,11 @@ private:
 
         // Horizontal scan.
 
-        for (int i = 0; i < RowCount; ++i) {
+        for (std::size_t i = 0; i < RowCount; ++i) {
             same_type_counter = 1;
             CandyType last_type = CandyType::None;
 
-            for (int j = 0; j < ColumnCount; ++j) {
+            for (std::size_t j = 0; j < ColumnCount; ++j) {
                 const auto& candy = board_[i][j];
 
                 if (candy.type == last_type) {
@@ -204,11 +203,11 @@ private:
 
         // Vertical scan.
 
-        for (int i = 0; i < ColumnCount; ++i) {
+        for (std::size_t i = 0; i < ColumnCount; ++i) {
             same_type_counter = 1;
             CandyType last_type = CandyType::None;
 
-            for (int j = 0; j < RowCount; ++j) {
+            for (std::size_t j = 0; j < RowCount; ++j) {
                 const auto& candy = board_[j][i];
 
                 if (candy.type == last_type) {
@@ -236,10 +235,10 @@ private:
     {
         auto move_cursor_relative = [=](int x, int y) constexpr
         {
-            if (static_cast<int>(hovered_x_) + x < 0 || static_cast<int>(hovered_x_) + x >= RowCount) {
+            if (static_cast<int>(hovered_x_) + x < 0 || static_cast<int>(hovered_x_) + x >= static_cast<int>(RowCount)) {
                 x = 0;
             }
-            if (static_cast<int>(hovered_y_) + y < 0 || static_cast<int>(hovered_y_) + y >= ColumnCount) {
+            if (static_cast<int>(hovered_y_) + y < 0 || static_cast<int>(hovered_y_) + y >= static_cast<int>(ColumnCount)) {
                 y = 0;
             }
 
@@ -248,6 +247,8 @@ private:
         };
 
         switch (input) {
+            case KeyboardInput::None:
+                break;
             case KeyboardInput::Left:
                 move_cursor_relative(0, -1);
                 break;

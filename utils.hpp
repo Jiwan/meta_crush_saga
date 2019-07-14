@@ -12,7 +12,7 @@
 
 constexpr int abs(int x)
 {
-    int const mask = x >> sizeof(int) * 8 - 1;
+    int const mask = x >> (sizeof(int) * 8 - 1);
 
     return (x + mask) ^ mask;
 }
