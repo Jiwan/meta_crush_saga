@@ -13,11 +13,25 @@
 #include "game_engine.hpp"
 #include "utils.hpp"
 
-struct BoardSize
+struct BoardParameters
 {
     int row_count;
     int column_count;
+    int score;
+    int moves;
 };
+
+constexpr int extract_int(auto it)
+{
+    int result = 0;
+    char digit = *it;
+    while ('0' <= digit && digit <= '9') {
+        result = 10 * result + (digit - '0');
+        ++it;
+        digit = (*it);
+    }
+    return result;
+}
 
 CONSTEXPR int stoi(const constexpr_string_view& s)
 {
@@ -106,21 +120,29 @@ constexpr int candy_type_offset = 1;
 constexpr int field_margins = 5;  // space, pipe, pipe, space, newline
 constexpr int noncandy_rows = 3;  // title, border, border
 
-constexpr auto parse_board_row_and_column_counts(auto&& str)
+constexpr auto parse_board_parameters(auto&& str)
 {
-    BoardSize board_size{ 0, 0 };
+    BoardParameters ret{ 0, 0, 0, 0 };
 
     auto gs_begin = str.cbegin();
     auto gs_end = str.cend();
     auto lefttop_corner = find(gs_begin + 1, gs_end, '\n');
     auto righttop_corner = find(lefttop_corner + 1, gs_end, '\n');
     auto field_width = righttop_corner - lefttop_corner;
-    auto score_start_position = find(gs_begin + 1, gs_end, '>') - gs_begin;
+    ret.column_count = (field_width - field_margins) / candy_size;
 
-    board_size.column_count = (field_width - field_margins) / candy_size;
-    board_size.row_count = ((score_start_position / field_width) - noncandy_rows) / candy_size;
+    auto score_start = find(gs_begin + 1, gs_end, '>');
+    auto score_start_position = score_start - gs_begin;
+    ret.row_count = ((score_start_position / field_width) - noncandy_rows) / candy_size;
 
-    return board_size;
+    const auto score_value_offset = 9;  // length of "> score: "
+    ret.score = extract_int(score_start + score_value_offset);
+
+    auto moves_start = find(score_start + 1, gs_end, '>');
+    const auto moves_value_offset = 9;  // length of "> moves: "
+    ret.moves = extract_int(moves_start + moves_value_offset);
+
+    return ret;
 }
 
 constexpr auto isolate_board_game(auto&& str)
@@ -156,9 +178,9 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 {
     constexpr auto board_string = isolate_board_game(get_game_state_string());
 
-    constexpr auto board_size = parse_board_row_and_column_counts(get_game_state_string());
-    constexpr int column_count = board_size.column_count;
-    constexpr int row_count = board_size.row_count;
+    constexpr auto board_parameters = parse_board_parameters(get_game_state_string());
+    constexpr int column_count = board_parameters.column_count;
+    constexpr int row_count = board_parameters.row_count;
 
     bool any_hovered = false;
     int hovered_x = 0;
@@ -200,8 +222,7 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
         hovered_x = selected_x;
         hovered_y = selected_y;
     }
-
-    return BoardExtented<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y };
+    return std::make_tuple(BoardExtented<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y }, board_parameters.score, board_parameters.moves);
 }
 
 template <class GameString>
@@ -231,10 +252,8 @@ template <class GameString>
 CONSTEXPR auto parse_game_state(GameString&& get_game_state_string)
 {
     CONSTEXPR auto board = parse_board(get_game_state_string);
-    CONSTEXPR auto score = parse_score(get_game_state_string);
-    CONSTEXPR auto moves = parse_moves(get_game_state_string);
 
-    return std::make_tuple(board, score, moves);
+    return board;
 }
 
 template <std::size_t RowCount, std::size_t ColumnCount>
