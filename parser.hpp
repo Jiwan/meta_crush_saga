@@ -13,6 +13,12 @@
 #include "game_engine.hpp"
 #include "utils.hpp"
 
+struct BoardSize
+{
+    int row_count;
+    int column_count;
+};
+
 CONSTEXPR int stoi(const constexpr_string_view& s)
 {
     int result = 0;
@@ -97,21 +103,24 @@ CONSTEXPR CandyState decode_candy_state(char up_char)
 
 constexpr int candy_size = 3;
 constexpr int candy_type_offset = 1;
+constexpr int field_margins = 5;  // space, pipe, pipe, space, newline
+constexpr int noncandy_rows = 3;  // title, border, border
 
-constexpr auto parse_board_column_count(const constexpr_string_view& str)
+constexpr auto parse_board_row_and_column_counts(auto&& str)
 {
-    const auto endline = find(str.cbegin(), str.cend(), '\n');
-    return (endline - str.cbegin()) / candy_size;
-}
+    BoardSize board_size{ 0, 0 };
 
-constexpr auto parse_board_row_count(const constexpr_string_view& str)
-{
-    int row_count = count(str.cbegin(), str.cend(), '\n');
+    auto gs_begin = str.cbegin();
+    auto gs_end = str.cend();
+    auto lefttop_corner = find(gs_begin + 1, gs_end, '\n');
+    auto righttop_corner = find(lefttop_corner + 1, gs_end, '\n');
+    auto field_width = righttop_corner - lefttop_corner;
+    auto score_start_position = find(gs_begin + 1, gs_end, '>') - gs_begin;
 
-    if (str[str.size() - 1] != '\n')
-        ++row_count;
+    board_size.column_count = (field_width - field_margins) / candy_size;
+    board_size.row_count = ((score_start_position / field_width) - noncandy_rows) / candy_size;
 
-    return row_count / candy_size;
+    return board_size;
 }
 
 constexpr auto isolate_board_game(auto&& str)
@@ -147,8 +156,10 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 {
     constexpr auto board_string = isolate_board_game(get_game_state_string());
 
-    constexpr int column_count = parse_board_column_count(board_string);
-    constexpr int row_count = parse_board_row_count(board_string);
+    constexpr auto board_size = parse_board_row_and_column_counts(get_game_state_string());
+    constexpr int column_count = board_size.column_count;
+    constexpr int row_count = board_size.row_count;
+
     bool any_hovered = false;
     int hovered_x = 0;
     int hovered_y = 0;
