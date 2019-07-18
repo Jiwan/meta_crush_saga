@@ -220,9 +220,14 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
         }
     }
 
-    if ((!any_hovered) && any_selected) {
-        hovered_x = selected_x;
-        hovered_y = selected_y;
+    if (!any_hovered) {
+        if (any_selected) {
+            hovered_x = selected_x;
+            hovered_y = selected_y;
+        } else {
+            hovered_x = row_count / 2;
+            hovered_y = column_count / 2;
+        }
     }
     return std::make_tuple(BoardExtented<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y }, board_parameters.score, board_parameters.moves);
 }
