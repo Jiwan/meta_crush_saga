@@ -10,7 +10,7 @@
 #include "board.hpp"
 #include "constexpr_string.hpp"
 #include "constexpr_string_view.hpp"
-#include "game_engine.hpp"
+#include "game_state.hpp"
 #include "utils.hpp"
 
 struct BoardParameters
@@ -204,7 +204,7 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
             hovered_y = column_count / 2;
         }
     }
-    return std::make_tuple(BoardExtented<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y }, board_parameters.score, board_parameters.moves);
+    return GameState<row_count, column_count>{ board, hovered_x, hovered_y, any_selected, selected_x, selected_y, board_parameters.score, board_parameters.moves };
 }
 
 template <class GameString>
