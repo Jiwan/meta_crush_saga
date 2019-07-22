@@ -25,10 +25,13 @@ constexpr int extract_int(auto it)
 {
     int result = 0;
     char digit = *it;
-    while ('0' <= digit && digit <= '9') {
+    const int digits_max = 5;  // assuming score and moves are less than million
+    int digits_count = 0;
+    while ('0' <= digit && digit <= '9' && digits_count <= digits_max) {
         result = 10 * result + (digit - '0');
         ++it;
         digit = (*it);
+        ++digits_count;
     }
     return result;
 }
@@ -120,15 +123,15 @@ constexpr int candy_type_offset = 1;
 constexpr int row_padding = 5;    // space, pipe, pipe, space, newline
 constexpr int noncandy_rows = 3;  // title, border, border
 
-constexpr auto parse_board_parameters(auto&& str)
+constexpr auto parse_board_parameters(auto str)
 {
     BoardParameters ret{ 0, 0, 0, 0 };
 
     auto gs_begin = str.cbegin();
     auto gs_end = str.cend();
-    auto lefttop_corner = find(gs_begin + 1, gs_end, '\n');
-    auto righttop_corner = find(lefttop_corner + 1, gs_end, '\n');
-    auto field_width = righttop_corner - lefttop_corner;
+    auto topborder_lowerbound = find(gs_begin + 1, gs_end, '\n');
+    auto topborder_end = find(topborder_lowerbound + 1, gs_end, '\n');
+    auto field_width = topborder_end - topborder_lowerbound;
     ret.column_count = (field_width - row_padding) / candy_size;
 
     auto score_start = find(gs_begin + 1, gs_end, '>');
@@ -145,40 +148,12 @@ constexpr auto parse_board_parameters(auto&& str)
     return ret;
 }
 
-constexpr auto isolate_board_game(auto&& str)
-{
-    str.erase(str.begin(), find(str.begin(), str.end(), '-'));
-    str.erase(str.begin(), find(str.begin(), str.end(), '\n') + 1);
-
-    auto it = str.begin();
-
-    while (true) {
-        auto board_left = find(it, str.end(), '|');
-
-        if (board_left == str.end())
-            break;
-
-        it = str.erase(it, board_left + 1);
-
-        auto board_right = find(it, str.end(), '|');
-        auto endline = find(it, str.end(), '\n');
-
-        it = str.erase(board_right, endline);
-
-        ++it;
-    }
-
-    str.erase(it, str.end());
-
-    return str;
-}
-
 template <class GameString>
 CONSTEXPR auto parse_board(GameString&& get_game_state_string)
 {
     constexpr auto board_string = get_game_state_string();
 
-    constexpr auto board_parameters = parse_board_parameters(get_game_state_string());
+    constexpr auto board_parameters = parse_board_parameters(board_string);
     constexpr int column_count = board_parameters.column_count;
     constexpr int row_count = board_parameters.row_count;
     bool any_hovered = false;
