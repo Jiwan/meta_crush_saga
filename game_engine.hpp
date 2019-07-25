@@ -6,26 +6,16 @@
 #include <variant>
 
 #include "board.hpp"
+#include "game_state.hpp"
 #include "inputs.hpp"
 #include "random.hpp"
-
-template <std::size_t RowCount, std::size_t ColumnCount>
-struct BoardExtented
-{
-    std::array<std::array<candy, ColumnCount>, RowCount> board;
-    int hovered_x;
-    int hovered_y;
-    bool any_selected;
-    int selected_x;
-    int selected_y;
-};
 
 template <std::size_t RowCount, std::size_t ColumnCount>
 class game_engine
 {
 public:
-    CONSTEXPR game_engine(const BoardExtented<RowCount, ColumnCount>& board_extended, int score, int moves, long long epoch_ms)
-        : rg_(static_cast<std::uint16_t>(epoch_ms)), board_(board_extended.board), score_(score), moves_(moves), any_selected_(board_extended.any_selected), selected_x_(board_extended.selected_x), selected_y_(board_extended.selected_y), hovered_x_(board_extended.hovered_x), hovered_y_(board_extended.hovered_y)
+    CONSTEXPR game_engine(const GameState<RowCount, ColumnCount>& gs, long long epoch_ms)
+        : rg_(static_cast<std::uint16_t>(epoch_ms)), board_(gs.board), score_(gs.score), moves_(gs.moves), any_selected_(gs.any_selected), selected_x_(gs.selected_x), selected_y_(gs.selected_y), hovered_x_(gs.hovered_x), hovered_y_(gs.hovered_y)
     {
     }
 
