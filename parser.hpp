@@ -19,6 +19,7 @@ struct BoardParameters
     int column_count;
     int score;
     int moves;
+    int index_first_candy;
 };
 
 constexpr int extract_int(auto it)
@@ -119,13 +120,15 @@ CONSTEXPR CandyState decode_candy_state(char up_char)
 }
 
 constexpr int candy_size = 3;
-constexpr int candy_type_offset = 1;
-constexpr int row_padding = 5;    // space, pipe, pipe, space, newline
-constexpr int noncandy_rows = 3;  // title, border, border
+constexpr int row_padding = 5;  // space, pipe, pipe, space, newline
 
 constexpr auto parse_board_parameters(auto str)
 {
-    BoardParameters ret{ 0, 0, 0, 0 };
+    BoardParameters ret{ 0, 0, 0, 0, 0 };
+
+    constexpr int noncandy_rows = 2;                       // border, border
+    constexpr int lines_after_topborder_end_to_candy = 1;  // empty
+    constexpr int offset_candy_after_topborder_end = 4;    // space, space, pipe, space
 
     auto gs_begin = str.cbegin();
     auto gs_end = str.cend();
@@ -135,8 +138,9 @@ constexpr auto parse_board_parameters(auto str)
     ret.column_count = (field_width - row_padding) / candy_size;
 
     auto score_start = find(gs_begin + 1, gs_end, '>');
-    auto score_start_position = score_start - gs_begin;
-    ret.row_count = ((score_start_position / field_width) - noncandy_rows) / candy_size;
+    ret.row_count = (((score_start - topborder_lowerbound) / field_width) - noncandy_rows) / candy_size;
+
+    ret.index_first_candy = (topborder_end - gs_begin) + (lines_after_topborder_end_to_candy * field_width) + offset_candy_after_topborder_end;
 
     const auto score_value_offset = 9;  // length of "> score: "
     ret.score = extract_int(score_start + score_value_offset);
@@ -156,6 +160,7 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
     constexpr auto board_parameters = parse_board_parameters(board_string);
     constexpr int column_count = board_parameters.column_count;
     constexpr int row_count = board_parameters.row_count;
+    constexpr int index_first_candy = board_parameters.index_first_candy;
     bool any_hovered = false;
     int hovered_x = 0;
     int hovered_y = 0;
@@ -166,13 +171,11 @@ CONSTEXPR auto parse_board(GameString&& get_game_state_string)
     std::array<std::array<candy, column_count>, row_count> board{};
 
     constexpr int width = ((column_count * candy_size) + row_padding);
-    constexpr int rows_before_candy_row = 3;      // title, border, spaces
-    constexpr int offset_first_candy_in_row = 3;  // space, pipe, space
     constexpr int candy_state_offset = (-width);  // same horisontal coordinates at previous row
 
     for (int i = 0; i < row_count; ++i) {
         for (int j = 0; j < column_count; ++j) {
-            const int candy_type_index = (i * candy_size + rows_before_candy_row) * width + (j * candy_size + offset_first_candy_in_row);
+            const int candy_type_index = i * candy_size * width + j * candy_size + index_first_candy;
             const int candy_matched = candy_type_index + candy_state_offset;
 
             board[i][j] = candy{
