@@ -153,9 +153,9 @@ constexpr auto parse_board_parameters(auto str)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_board(GameString&& get_game_state_string)
+CONSTEXPR auto parse_board()
 {
-    constexpr auto board_string = get_game_state_string();
+    constexpr auto board_string = GameString{}();
 
     constexpr auto board_parameters = parse_board_parameters(board_string);
     constexpr int column_count = board_parameters.column_count;
@@ -234,9 +234,9 @@ CONSTEXPR auto parse_moves(GameString&& get_game_state_string)
 }
 
 template <class GameString>
-CONSTEXPR auto parse_game_state(GameString&& get_game_state_string)
+CONSTEXPR auto parse_game_state()
 {
-    CONSTEXPR auto board = parse_board(get_game_state_string);
+    CONSTEXPR auto board = parse_board<GameString>();
 
     return board;
 }
