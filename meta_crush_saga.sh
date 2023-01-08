@@ -69,7 +69,5 @@ do
         fi  
     done
 
-    echo "R\"(" > current_state.txt
-    echo $current_state >> current_state.txt
-    echo ")\"" >> current_state.txt
+    echo "R\"($current_state)\"" > current_state.txt
 done
